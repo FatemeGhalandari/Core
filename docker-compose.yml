@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: core-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: core
+      POSTGRES_PASSWORD: core_password
+      POSTGRES_DB: core_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - core_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  core_postgres_data:

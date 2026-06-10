@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  owner
+  admin
+  staff
+}
+
+enum Priority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum Source {
+  staff_created
+  customer_portal
+}
+
+enum Visibility {
+  public
+  internal
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  industry  String   @default("core")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users          User[]
+  customers      Customer[]
+  cases          Case[]
+  categories     CaseCategory[]
+  statuses       WorkflowStatus[]
+  comments       CaseComment[]
+  attachments    CaseAttachment[]
+  activityEvents CaseActivityEvent[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  email          String   @unique
+  passwordHash   String
+  role           Role
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  assignedCases       Case[]              @relation("AssignedCases")
+  authoredComments    CaseComment[]       @relation("UserComments")
+  uploadedAttachments CaseAttachment[]    @relation("UserAttachments")
+  activityEvents      CaseActivityEvent[] @relation("UserEvents")
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Customer {
+  id                String   @id @default(uuid())
+  organizationId    String
+  name              String
+  email             String?
+  phone             String?
+  externalReference String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  cases               Case[]
+  authoredComments    CaseComment[]       @relation("CustomerComments")
+  uploadedAttachments CaseAttachment[]    @relation("CustomerAttachments")
+  activityEvents      CaseActivityEvent[] @relation("CustomerEvents")
+
+  @@index([organizationId])
+  @@map("customers")
+}
+
+model CaseCategory {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  slug           String
+  description    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  cases Case[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@map("case_categories")
+}
+
+model WorkflowStatus {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  slug           String
+  color          String?
+  sortOrder      Int      @default(0)
+  isDefault      Boolean  @default(false)
+  isClosed       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  cases Case[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+  @@map("workflow_statuses")
+}
+
+model Case {
+  id             String    @id @default(uuid())
+  organizationId String
+  customerId     String
+  assignedUserId String?
+  categoryId     String?
+  statusId       String
+  title          String
+  description    String?
+  priority       Priority  @default(normal)
+  source         Source    @default(staff_created)
+  intakeData     Json      @default("{}")
+  dueAt          DateTime?
+  closedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customer     Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  assignedUser User?          @relation("AssignedCases", fields: [assignedUserId], references: [id], onDelete: SetNull)
+  category     CaseCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status       WorkflowStatus @relation(fields: [statusId], references: [id], onDelete: Restrict)
+
+  comments       CaseComment[]
+  attachments    CaseAttachment[]
+  activityEvents CaseActivityEvent[]
+
+  @@index([organizationId])
+  @@index([customerId])
+  @@index([assignedUserId])
+  @@index([statusId])
+  @@index([priority])
+  @@index([updatedAt])
+  @@map("cases")
+}
+
+model CaseComment {
+  id               String     @id @default(uuid())
+  organizationId   String
+  caseId           String
+  authorUserId     String?
+  authorCustomerId String?
+  body             String
+  visibility       Visibility
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  case           Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  authorUser     User?        @relation("UserComments", fields: [authorUserId], references: [id], onDelete: SetNull)
+  authorCustomer Customer?    @relation("CustomerComments", fields: [authorCustomerId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([caseId])
+  @@map("case_comments")
+}
+
+model CaseAttachment {
+  id                   String     @id @default(uuid())
+  organizationId       String
+  caseId               String
+  uploadedByUserId     String?
+  uploadedByCustomerId String?
+  fileName             String
+  fileUrl              String
+  fileType             String?
+  fileSize             Int?
+  visibility           Visibility @default(public)
+  createdAt            DateTime   @default(now())
+
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  case               Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  uploadedByUser     User?        @relation("UserAttachments", fields: [uploadedByUserId], references: [id], onDelete: SetNull)
+  uploadedByCustomer Customer?    @relation("CustomerAttachments", fields: [uploadedByCustomerId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([caseId])
+  @@map("case_attachments")
+}
+
+model CaseActivityEvent {
+  id              String   @id @default(uuid())
+  organizationId  String
+  caseId          String
+  actorUserId     String?
+  actorCustomerId String?
+  eventType       String
+  metadata        Json     @default("{}")
+  createdAt       DateTime @default(now())
+
+  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  case          Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  actorUser     User?        @relation("UserEvents", fields: [actorUserId], references: [id], onDelete: SetNull)
+  actorCustomer Customer?    @relation("CustomerEvents", fields: [actorCustomerId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([caseId])
+  @@index([createdAt])
+  @@map("case_activity_events")
+}
