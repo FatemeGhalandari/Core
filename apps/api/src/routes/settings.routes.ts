@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { z } from "zod";
+import {
+  DEMO_ORGANIZATION_SLUG,
+  getDemoOrganizationId,
+} from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
+import { slugify } from "../lib/slug.js";
 import {
   attachCurrentUser,
   requireRole,
@@ -171,33 +176,6 @@ const updateIntakeFieldSchema = z
     message: "At least one field is required.",
   });
 
-function slugify(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-async function getDemoOrganizationId(): Promise<string> {
-  const organization = await prisma.organization.findUnique({
-    where: {
-      slug: "maplecare-clinic",
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!organization) {
-    throw new Error(
-      "Demo organization not found. Run the database seed first.",
-    );
-  }
-
-  return organization.id;
-}
-
 settingsRouter.get("/industry-templates", (_req, res) => {
   res.status(200).json({
     data: industryTemplates,
@@ -208,7 +186,7 @@ settingsRouter.get("/workspace", async (_req, res, next) => {
   try {
     const workspace = await prisma.organization.findUnique({
       where: {
-        slug: "maplecare-clinic",
+        slug: DEMO_ORGANIZATION_SLUG,
       },
       select: {
         id: true,
@@ -251,7 +229,7 @@ settingsRouter.patch("/workspace", ...requireSettingsManager, async (req, res, n
 
     const existingWorkspace = await prisma.organization.findUnique({
       where: {
-        slug: "maplecare-clinic",
+        slug: DEMO_ORGANIZATION_SLUG,
       },
       select: {
         id: true,
