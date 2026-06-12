@@ -126,6 +126,27 @@ exports.Prisma.OrganizationScalarFieldEnum = {
   slug: 'slug',
   industry: 'industry',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  appName: 'appName',
+  caseLabel: 'caseLabel',
+  customerLabel: 'customerLabel',
+  industryTemplateKey: 'industryTemplateKey'
+};
+
+exports.Prisma.IntakeFieldScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  key: 'key',
+  label: 'label',
+  fieldType: 'fieldType',
+  placeholder: 'placeholder',
+  helpText: 'helpText',
+  options: 'options',
+  isRequired: 'isRequired',
+  showOnCaseDetail: 'showOnCaseDetail',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -234,6 +255,11 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
@@ -253,6 +279,18 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.IntakeFieldType = exports.$Enums.IntakeFieldType = {
+  text: 'text',
+  textarea: 'textarea',
+  email: 'email',
+  phone: 'phone',
+  number: 'number',
+  date: 'date',
+  select: 'select',
+  multiselect: 'multiselect',
+  checkbox: 'checkbox'
+};
+
 exports.Role = exports.$Enums.Role = {
   owner: 'owner',
   admin: 'admin',
@@ -278,6 +316,7 @@ exports.Visibility = exports.$Enums.Visibility = {
 
 exports.Prisma.ModelName = {
   Organization: 'Organization',
+  IntakeField: 'IntakeField',
   User: 'User',
   Customer: 'Customer',
   CaseCategory: 'CaseCategory',
