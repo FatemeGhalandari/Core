@@ -1,34 +1,10 @@
 import { Router } from "express";
 import type { Prisma } from "../generated/prisma/index.js";
+import { getDemoOrganizationId } from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
+import { getStringQueryParam } from "../lib/queryParams.js";
 
 export const customerRouter = Router();
-
-function getStringQueryParam(value: unknown): string | undefined {
-  if (typeof value !== "string") return undefined;
-
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}
-
-async function getDemoOrganizationId(): Promise<string> {
-  const organization = await prisma.organization.findUnique({
-    where: {
-      slug: "maplecare-clinic",
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!organization) {
-    throw new Error(
-      "Demo organization not found. Run the database seed first.",
-    );
-  }
-
-  return organization.id;
-}
 
 customerRouter.get("/", async (req, res, next) => {
   try {
