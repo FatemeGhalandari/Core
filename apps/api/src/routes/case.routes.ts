@@ -2,9 +2,18 @@ import { Router } from "express";
 import { Priority } from "../generated/prisma/index.js";
 import type { Prisma } from "../generated/prisma/index.js";
 import { prisma } from "../lib/prisma.js";
+import {
+  attachCurrentUser,
+  requireRole,
+  requireUser,
+} from "../middleware/auth.js";
 import { z } from "zod";
 
 export const caseRouter = Router();
+
+caseRouter.use(attachCurrentUser);
+
+const requireCaseWorker = [requireUser, requireRole("owner", "admin", "staff")];
 
 const createCaseSchema = z.object({
   title: z.string().min(3),
@@ -13,6 +22,7 @@ const createCaseSchema = z.object({
   customerEmail: z.string().email().optional(),
   customerPhone: z.string().optional(),
   priority: z.nativeEnum(Priority).default(Priority.normal),
+  intakeData: z.record(z.string(), z.unknown()).optional(),
 });
 
 const createCommentSchema = z.object({
@@ -24,6 +34,10 @@ const updateCaseStatusSchema = z.object({
   statusSlug: z.string().min(1),
 });
 
+const updateCaseAssigneeSchema = z.object({
+  assignedUserId: z.string().min(1).nullable(),
+});
+
 function getStringQueryParam(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
 
@@ -33,6 +47,14 @@ function getStringQueryParam(value: unknown): string | undefined {
 
 function isPriority(value: string): value is Priority {
   return Object.values(Priority).includes(value as Priority);
+}
+
+function hasNonEmptyIntakeValue(value: unknown) {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+
+  return true;
 }
 
 async function getDemoOrganizationId(): Promise<string> {
@@ -54,7 +76,7 @@ async function getDemoOrganizationId(): Promise<string> {
   return organization.id;
 }
 
-caseRouter.post("/:id/comments", async (req, res) => {
+caseRouter.post("/:id/comments", ...requireCaseWorker, async (req, res) => {
   const parsed = createCommentSchema.safeParse(req.body);
 
   if (!parsed.success) {
@@ -64,7 +86,7 @@ caseRouter.post("/:id/comments", async (req, res) => {
     });
   }
 
-  const { id } = req.params;
+  const id = String(req.params.id);
   const { body, visibility } = parsed.data;
 
   const organization = await prisma.organization.findFirst({
@@ -313,7 +335,7 @@ caseRouter.get("/", async (req, res, next) => {
   }
 });
 
-caseRouter.patch("/:id/status", async (req, res, next) => {
+caseRouter.patch("/:id/status", ...requireCaseWorker, async (req, res, next) => {
   try {
     const parsed = updateCaseStatusSchema.safeParse(req.body);
 
@@ -325,7 +347,7 @@ caseRouter.patch("/:id/status", async (req, res, next) => {
       return;
     }
 
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { statusSlug } = parsed.data;
 
     const organizationId = await getDemoOrganizationId();
@@ -398,10 +420,136 @@ caseRouter.patch("/:id/status", async (req, res, next) => {
   }
 });
 
-caseRouter.post("/", async (req, res, next) => {
+caseRouter.patch("/:id/assignee", ...requireCaseWorker, async (req, res, next) => {
+  try {
+    const parsed = updateCaseAssigneeSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      res.status(400).json({
+        error: "Invalid request body",
+        details: parsed.error.flatten(),
+      });
+      return;
+    }
+
+    const id = String(req.params.id);
+    const { assignedUserId } = parsed.data;
+
+    const organizationId = await getDemoOrganizationId();
+
+    const existingCase = await prisma.case.findFirst({
+      where: {
+        id,
+        organizationId,
+      },
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!existingCase) {
+      res.status(404).json({
+        error: "Case not found",
+      });
+      return;
+    }
+
+    const nextAssignee =
+      assignedUserId === null
+        ? null
+        : await prisma.user.findFirst({
+            where: {
+              id: assignedUserId,
+              organizationId,
+            },
+            select: {
+              id: true,
+              name: true,
+            },
+          });
+
+    if (assignedUserId !== null && !nextAssignee) {
+      res.status(404).json({
+        error: "Assigned user not found",
+      });
+      return;
+    }
+
+    const updatedCase = await prisma.$transaction(async (tx) => {
+      const assignedCase = await tx.case.update({
+        where: {
+          id: existingCase.id,
+        },
+        data: {
+          assignedUserId,
+        },
+        include: {
+          customer: true,
+          assignedUser: true,
+          category: true,
+          status: true,
+        },
+      });
+
+      await tx.caseActivityEvent.create({
+        data: {
+          organizationId,
+          caseId: assignedCase.id,
+          actorUserId: nextAssignee?.id,
+          eventType: "case.assigned",
+          metadata: {
+            fromAssigneeId: existingCase.assignedUser?.id ?? null,
+            fromAssigneeName: existingCase.assignedUser?.name ?? null,
+            toAssigneeId: nextAssignee?.id ?? null,
+            toAssigneeName: nextAssignee?.name ?? null,
+          },
+        },
+      });
+
+      return assignedCase;
+    });
+
+    res.status(200).json({
+      data: updatedCase,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+caseRouter.post("/", ...requireCaseWorker, async (req, res, next) => {
   try {
     const organizationId = await getDemoOrganizationId();
     const data = createCaseSchema.parse(req.body);
+    const intakeData = data.intakeData ?? {};
+
+    const requiredIntakeFields = await prisma.intakeField.findMany({
+      where: {
+        organizationId,
+        isActive: true,
+        isRequired: true,
+      },
+      select: {
+        key: true,
+      },
+    });
+
+    const missingIntakeFieldKeys = requiredIntakeFields
+      .map((field) => field.key)
+      .filter((key) => !hasNonEmptyIntakeValue(intakeData[key]));
+
+    if (missingIntakeFieldKeys.length > 0) {
+      res.status(400).json({
+        message: "Missing required intake fields.",
+        missingFields: missingIntakeFieldKeys,
+      });
+      return;
+    }
 
     const defaultStatus = await prisma.workflowStatus.findFirst({
       where: {
@@ -437,6 +585,8 @@ caseRouter.post("/", async (req, res, next) => {
     });
 
     const result = await prisma.$transaction(async (tx) => {
+      const caseIntakeData = intakeData as Prisma.InputJsonObject;
+
       const customer = await tx.customer.create({
         data: {
           organizationId,
@@ -457,7 +607,7 @@ caseRouter.post("/", async (req, res, next) => {
           description: data.description,
           priority: data.priority,
           source: "staff_created",
-          intakeData: {},
+          intakeData: caseIntakeData,
         },
         include: {
           customer: true,
