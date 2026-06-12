@@ -1,0 +1,93 @@
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
+import { api } from "../../lib/api";
+import { useAuth, type AuthUser } from "./auth";
+
+type LoginResponse = {
+  data: {
+    user: AuthUser;
+  };
+};
+
+async function loginUser(data: { email: string; password: string }) {
+  const response = await api.post<LoginResponse>("/api/auth/login", data);
+
+  return response.data.data.user;
+}
+
+export function LoginPage() {
+  const navigate = useNavigate();
+  const { user, login } = useAuth();
+  const [email, setEmail] = useState("owner@maplecare.test");
+  const [password, setPassword] = useState("Password123!");
+
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (loggedInUser) => {
+      login(loggedInUser);
+      navigate("/");
+    },
+  });
+
+  function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    loginMutation.mutate({
+      email,
+      password,
+    });
+  }
+
+  if (user) {
+    return <Navigate replace to="/" />;
+  }
+
+  return (
+    <div className="login-page">
+      <form className="login-card" onSubmit={handleLogin}>
+        <div>
+          <p className="eyebrow">Core Login</p>
+          <h1>Sign in</h1>
+          <p className="page-description">
+            Use a demo user to personalize the workspace.
+          </p>
+        </div>
+
+        <label>
+          Email
+          <input
+            autoComplete="email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            autoComplete="current-password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </label>
+
+        {loginMutation.isError && (
+          <div className="form-error">
+            Could not sign in. Check the email and password.
+          </div>
+        )}
+
+        <button
+          className="primary-button"
+          disabled={loginMutation.isPending || !email || !password}
+          type="submit"
+        >
+          {loginMutation.isPending ? "Signing in..." : "Sign in"}
+        </button>
+      </form>
+    </div>
+  );
+}
