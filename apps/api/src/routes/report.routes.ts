@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Priority } from "../generated/prisma/index.js";
+import { getDemoOrganizationId } from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
 import {
   attachCurrentUser,
@@ -15,25 +16,6 @@ const requireReportViewer = [
   requireUser,
   requireRole("owner", "admin", "staff", "viewer"),
 ];
-
-async function getDemoOrganizationId(): Promise<string> {
-  const organization = await prisma.organization.findUnique({
-    where: {
-      slug: "maplecare-clinic",
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!organization) {
-    throw new Error(
-      "Demo organization not found. Run the database seed first.",
-    );
-  }
-
-  return organization.id;
-}
 
 function getAgeInDays(value: Date) {
   const createdAt = value.getTime();
