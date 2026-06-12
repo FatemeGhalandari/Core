@@ -3,7 +3,11 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { prisma } from "./lib/prisma.js";
+import { authRouter } from "./routes/auth.routes.js";
 import { caseRouter } from "./routes/case.routes.js";
+import { customerRouter } from "./routes/customer.routes.js";
+import { reportRouter } from "./routes/report.routes.js";
+import { settingsRouter } from "./routes/settings.routes.js";
 
 dotenv.config();
 
@@ -22,7 +26,15 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/api/auth", authRouter);
+
 app.use("/api/cases", caseRouter);
+
+app.use("/api/customers", customerRouter);
+
+app.use("/api/reports", reportRouter);
+
+app.use("/api/settings", settingsRouter);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
