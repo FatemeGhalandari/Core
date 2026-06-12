@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type Organization = $Result.DefaultSelection<Prisma.$OrganizationPayload>
 /**
+ * Model IntakeField
+ * 
+ */
+export type IntakeField = $Result.DefaultSelection<Prisma.$IntakeFieldPayload>
+/**
  * Model User
  * 
  */
@@ -97,6 +102,21 @@ export const Visibility: {
 
 export type Visibility = (typeof Visibility)[keyof typeof Visibility]
 
+
+export const IntakeFieldType: {
+  text: 'text',
+  textarea: 'textarea',
+  email: 'email',
+  phone: 'phone',
+  number: 'number',
+  date: 'date',
+  select: 'select',
+  multiselect: 'multiselect',
+  checkbox: 'checkbox'
+};
+
+export type IntakeFieldType = (typeof IntakeFieldType)[keyof typeof IntakeFieldType]
+
 }
 
 export type Role = $Enums.Role
@@ -114,6 +134,10 @@ export const Source: typeof $Enums.Source
 export type Visibility = $Enums.Visibility
 
 export const Visibility: typeof $Enums.Visibility
+
+export type IntakeFieldType = $Enums.IntakeFieldType
+
+export const IntakeFieldType: typeof $Enums.IntakeFieldType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -245,6 +269,16 @@ export class PrismaClient<
     * ```
     */
   get organization(): Prisma.OrganizationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.intakeField`: Exposes CRUD operations for the **IntakeField** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more IntakeFields
+    * const intakeFields = await prisma.intakeField.findMany()
+    * ```
+    */
+  get intakeField(): Prisma.IntakeFieldDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -760,6 +794,7 @@ export namespace Prisma {
 
   export const ModelName: {
     Organization: 'Organization',
+    IntakeField: 'IntakeField',
     User: 'User',
     Customer: 'Customer',
     CaseCategory: 'CaseCategory',
@@ -783,7 +818,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "organization" | "user" | "customer" | "caseCategory" | "workflowStatus" | "case" | "caseComment" | "caseAttachment" | "caseActivityEvent"
+      modelProps: "organization" | "intakeField" | "user" | "customer" | "caseCategory" | "workflowStatus" | "case" | "caseComment" | "caseAttachment" | "caseActivityEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -858,6 +893,80 @@ export namespace Prisma {
           count: {
             args: Prisma.OrganizationCountArgs<ExtArgs>
             result: $Utils.Optional<OrganizationCountAggregateOutputType> | number
+          }
+        }
+      }
+      IntakeField: {
+        payload: Prisma.$IntakeFieldPayload<ExtArgs>
+        fields: Prisma.IntakeFieldFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.IntakeFieldFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.IntakeFieldFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          findFirst: {
+            args: Prisma.IntakeFieldFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.IntakeFieldFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          findMany: {
+            args: Prisma.IntakeFieldFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>[]
+          }
+          create: {
+            args: Prisma.IntakeFieldCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          createMany: {
+            args: Prisma.IntakeFieldCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.IntakeFieldCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>[]
+          }
+          delete: {
+            args: Prisma.IntakeFieldDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          update: {
+            args: Prisma.IntakeFieldUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          deleteMany: {
+            args: Prisma.IntakeFieldDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.IntakeFieldUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.IntakeFieldUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>[]
+          }
+          upsert: {
+            args: Prisma.IntakeFieldUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$IntakeFieldPayload>
+          }
+          aggregate: {
+            args: Prisma.IntakeFieldAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateIntakeField>
+          }
+          groupBy: {
+            args: Prisma.IntakeFieldGroupByArgs<ExtArgs>
+            result: $Utils.Optional<IntakeFieldGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.IntakeFieldCountArgs<ExtArgs>
+            result: $Utils.Optional<IntakeFieldCountAggregateOutputType> | number
           }
         }
       }
@@ -1562,6 +1671,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     organization?: OrganizationOmit
+    intakeField?: IntakeFieldOmit
     user?: UserOmit
     customer?: CustomerOmit
     caseCategory?: CaseCategoryOmit
@@ -1658,6 +1768,7 @@ export namespace Prisma {
     comments: number
     attachments: number
     activityEvents: number
+    intakeFields: number
   }
 
   export type OrganizationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1669,6 +1780,7 @@ export namespace Prisma {
     comments?: boolean | OrganizationCountOutputTypeCountCommentsArgs
     attachments?: boolean | OrganizationCountOutputTypeCountAttachmentsArgs
     activityEvents?: boolean | OrganizationCountOutputTypeCountActivityEventsArgs
+    intakeFields?: boolean | OrganizationCountOutputTypeCountIntakeFieldsArgs
   }
 
   // Custom InputTypes
@@ -1736,6 +1848,13 @@ export namespace Prisma {
    */
   export type OrganizationCountOutputTypeCountActivityEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CaseActivityEventWhereInput
+  }
+
+  /**
+   * OrganizationCountOutputType without action
+   */
+  export type OrganizationCountOutputTypeCountIntakeFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IntakeFieldWhereInput
   }
 
 
@@ -1987,6 +2106,10 @@ export namespace Prisma {
     industry: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    appName: string | null
+    caseLabel: string | null
+    customerLabel: string | null
+    industryTemplateKey: string | null
   }
 
   export type OrganizationMaxAggregateOutputType = {
@@ -1996,6 +2119,10 @@ export namespace Prisma {
     industry: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    appName: string | null
+    caseLabel: string | null
+    customerLabel: string | null
+    industryTemplateKey: string | null
   }
 
   export type OrganizationCountAggregateOutputType = {
@@ -2005,6 +2132,10 @@ export namespace Prisma {
     industry: number
     createdAt: number
     updatedAt: number
+    appName: number
+    caseLabel: number
+    customerLabel: number
+    industryTemplateKey: number
     _all: number
   }
 
@@ -2016,6 +2147,10 @@ export namespace Prisma {
     industry?: true
     createdAt?: true
     updatedAt?: true
+    appName?: true
+    caseLabel?: true
+    customerLabel?: true
+    industryTemplateKey?: true
   }
 
   export type OrganizationMaxAggregateInputType = {
@@ -2025,6 +2160,10 @@ export namespace Prisma {
     industry?: true
     createdAt?: true
     updatedAt?: true
+    appName?: true
+    caseLabel?: true
+    customerLabel?: true
+    industryTemplateKey?: true
   }
 
   export type OrganizationCountAggregateInputType = {
@@ -2034,6 +2173,10 @@ export namespace Prisma {
     industry?: true
     createdAt?: true
     updatedAt?: true
+    appName?: true
+    caseLabel?: true
+    customerLabel?: true
+    industryTemplateKey?: true
     _all?: true
   }
 
@@ -2116,6 +2259,10 @@ export namespace Prisma {
     industry: string
     createdAt: Date
     updatedAt: Date
+    appName: string | null
+    caseLabel: string | null
+    customerLabel: string | null
+    industryTemplateKey: string | null
     _count: OrganizationCountAggregateOutputType | null
     _min: OrganizationMinAggregateOutputType | null
     _max: OrganizationMaxAggregateOutputType | null
@@ -2142,6 +2289,10 @@ export namespace Prisma {
     industry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    appName?: boolean
+    caseLabel?: boolean
+    customerLabel?: boolean
+    industryTemplateKey?: boolean
     users?: boolean | Organization$usersArgs<ExtArgs>
     customers?: boolean | Organization$customersArgs<ExtArgs>
     cases?: boolean | Organization$casesArgs<ExtArgs>
@@ -2150,6 +2301,7 @@ export namespace Prisma {
     comments?: boolean | Organization$commentsArgs<ExtArgs>
     attachments?: boolean | Organization$attachmentsArgs<ExtArgs>
     activityEvents?: boolean | Organization$activityEventsArgs<ExtArgs>
+    intakeFields?: boolean | Organization$intakeFieldsArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["organization"]>
 
@@ -2160,6 +2312,10 @@ export namespace Prisma {
     industry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    appName?: boolean
+    caseLabel?: boolean
+    customerLabel?: boolean
+    industryTemplateKey?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2169,6 +2325,10 @@ export namespace Prisma {
     industry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    appName?: boolean
+    caseLabel?: boolean
+    customerLabel?: boolean
+    industryTemplateKey?: boolean
   }, ExtArgs["result"]["organization"]>
 
   export type OrganizationSelectScalar = {
@@ -2178,9 +2338,13 @@ export namespace Prisma {
     industry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    appName?: boolean
+    caseLabel?: boolean
+    customerLabel?: boolean
+    industryTemplateKey?: boolean
   }
 
-  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "industry" | "createdAt" | "updatedAt", ExtArgs["result"]["organization"]>
+  export type OrganizationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "industry" | "createdAt" | "updatedAt" | "appName" | "caseLabel" | "customerLabel" | "industryTemplateKey", ExtArgs["result"]["organization"]>
   export type OrganizationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Organization$usersArgs<ExtArgs>
     customers?: boolean | Organization$customersArgs<ExtArgs>
@@ -2190,6 +2354,7 @@ export namespace Prisma {
     comments?: boolean | Organization$commentsArgs<ExtArgs>
     attachments?: boolean | Organization$attachmentsArgs<ExtArgs>
     activityEvents?: boolean | Organization$activityEventsArgs<ExtArgs>
+    intakeFields?: boolean | Organization$intakeFieldsArgs<ExtArgs>
     _count?: boolean | OrganizationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2206,6 +2371,7 @@ export namespace Prisma {
       comments: Prisma.$CaseCommentPayload<ExtArgs>[]
       attachments: Prisma.$CaseAttachmentPayload<ExtArgs>[]
       activityEvents: Prisma.$CaseActivityEventPayload<ExtArgs>[]
+      intakeFields: Prisma.$IntakeFieldPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2214,6 +2380,10 @@ export namespace Prisma {
       industry: string
       createdAt: Date
       updatedAt: Date
+      appName: string | null
+      caseLabel: string | null
+      customerLabel: string | null
+      industryTemplateKey: string | null
     }, ExtArgs["result"]["organization"]>
     composites: {}
   }
@@ -2616,6 +2786,7 @@ export namespace Prisma {
     comments<T extends Organization$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attachments<T extends Organization$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     activityEvents<T extends Organization$activityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$activityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CaseActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    intakeFields<T extends Organization$intakeFieldsArgs<ExtArgs> = {}>(args?: Subset<T, Organization$intakeFieldsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2651,6 +2822,10 @@ export namespace Prisma {
     readonly industry: FieldRef<"Organization", 'String'>
     readonly createdAt: FieldRef<"Organization", 'DateTime'>
     readonly updatedAt: FieldRef<"Organization", 'DateTime'>
+    readonly appName: FieldRef<"Organization", 'String'>
+    readonly caseLabel: FieldRef<"Organization", 'String'>
+    readonly customerLabel: FieldRef<"Organization", 'String'>
+    readonly industryTemplateKey: FieldRef<"Organization", 'String'>
   }
     
 
@@ -3236,6 +3411,30 @@ export namespace Prisma {
   }
 
   /**
+   * Organization.intakeFields
+   */
+  export type Organization$intakeFieldsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    where?: IntakeFieldWhereInput
+    orderBy?: IntakeFieldOrderByWithRelationInput | IntakeFieldOrderByWithRelationInput[]
+    cursor?: IntakeFieldWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: IntakeFieldScalarFieldEnum | IntakeFieldScalarFieldEnum[]
+  }
+
+  /**
    * Organization without action
    */
   export type OrganizationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3251,6 +3450,1216 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrganizationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model IntakeField
+   */
+
+  export type AggregateIntakeField = {
+    _count: IntakeFieldCountAggregateOutputType | null
+    _avg: IntakeFieldAvgAggregateOutputType | null
+    _sum: IntakeFieldSumAggregateOutputType | null
+    _min: IntakeFieldMinAggregateOutputType | null
+    _max: IntakeFieldMaxAggregateOutputType | null
+  }
+
+  export type IntakeFieldAvgAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type IntakeFieldSumAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type IntakeFieldMinAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    key: string | null
+    label: string | null
+    fieldType: $Enums.IntakeFieldType | null
+    placeholder: string | null
+    helpText: string | null
+    isRequired: boolean | null
+    showOnCaseDetail: boolean | null
+    isActive: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IntakeFieldMaxAggregateOutputType = {
+    id: string | null
+    organizationId: string | null
+    key: string | null
+    label: string | null
+    fieldType: $Enums.IntakeFieldType | null
+    placeholder: string | null
+    helpText: string | null
+    isRequired: boolean | null
+    showOnCaseDetail: boolean | null
+    isActive: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type IntakeFieldCountAggregateOutputType = {
+    id: number
+    organizationId: number
+    key: number
+    label: number
+    fieldType: number
+    placeholder: number
+    helpText: number
+    options: number
+    isRequired: number
+    showOnCaseDetail: number
+    isActive: number
+    sortOrder: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type IntakeFieldAvgAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type IntakeFieldSumAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type IntakeFieldMinAggregateInputType = {
+    id?: true
+    organizationId?: true
+    key?: true
+    label?: true
+    fieldType?: true
+    placeholder?: true
+    helpText?: true
+    isRequired?: true
+    showOnCaseDetail?: true
+    isActive?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IntakeFieldMaxAggregateInputType = {
+    id?: true
+    organizationId?: true
+    key?: true
+    label?: true
+    fieldType?: true
+    placeholder?: true
+    helpText?: true
+    isRequired?: true
+    showOnCaseDetail?: true
+    isActive?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type IntakeFieldCountAggregateInputType = {
+    id?: true
+    organizationId?: true
+    key?: true
+    label?: true
+    fieldType?: true
+    placeholder?: true
+    helpText?: true
+    options?: true
+    isRequired?: true
+    showOnCaseDetail?: true
+    isActive?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type IntakeFieldAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IntakeField to aggregate.
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IntakeFields to fetch.
+     */
+    orderBy?: IntakeFieldOrderByWithRelationInput | IntakeFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: IntakeFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IntakeFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IntakeFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned IntakeFields
+    **/
+    _count?: true | IntakeFieldCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: IntakeFieldAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: IntakeFieldSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: IntakeFieldMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: IntakeFieldMaxAggregateInputType
+  }
+
+  export type GetIntakeFieldAggregateType<T extends IntakeFieldAggregateArgs> = {
+        [P in keyof T & keyof AggregateIntakeField]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateIntakeField[P]>
+      : GetScalarType<T[P], AggregateIntakeField[P]>
+  }
+
+
+
+
+  export type IntakeFieldGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: IntakeFieldWhereInput
+    orderBy?: IntakeFieldOrderByWithAggregationInput | IntakeFieldOrderByWithAggregationInput[]
+    by: IntakeFieldScalarFieldEnum[] | IntakeFieldScalarFieldEnum
+    having?: IntakeFieldScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: IntakeFieldCountAggregateInputType | true
+    _avg?: IntakeFieldAvgAggregateInputType
+    _sum?: IntakeFieldSumAggregateInputType
+    _min?: IntakeFieldMinAggregateInputType
+    _max?: IntakeFieldMaxAggregateInputType
+  }
+
+  export type IntakeFieldGroupByOutputType = {
+    id: string
+    organizationId: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder: string | null
+    helpText: string | null
+    options: JsonValue | null
+    isRequired: boolean
+    showOnCaseDetail: boolean
+    isActive: boolean
+    sortOrder: number
+    createdAt: Date
+    updatedAt: Date
+    _count: IntakeFieldCountAggregateOutputType | null
+    _avg: IntakeFieldAvgAggregateOutputType | null
+    _sum: IntakeFieldSumAggregateOutputType | null
+    _min: IntakeFieldMinAggregateOutputType | null
+    _max: IntakeFieldMaxAggregateOutputType | null
+  }
+
+  type GetIntakeFieldGroupByPayload<T extends IntakeFieldGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<IntakeFieldGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof IntakeFieldGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], IntakeFieldGroupByOutputType[P]>
+            : GetScalarType<T[P], IntakeFieldGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type IntakeFieldSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    key?: boolean
+    label?: boolean
+    fieldType?: boolean
+    placeholder?: boolean
+    helpText?: boolean
+    options?: boolean
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["intakeField"]>
+
+  export type IntakeFieldSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    key?: boolean
+    label?: boolean
+    fieldType?: boolean
+    placeholder?: boolean
+    helpText?: boolean
+    options?: boolean
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["intakeField"]>
+
+  export type IntakeFieldSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    organizationId?: boolean
+    key?: boolean
+    label?: boolean
+    fieldType?: boolean
+    placeholder?: boolean
+    helpText?: boolean
+    options?: boolean
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["intakeField"]>
+
+  export type IntakeFieldSelectScalar = {
+    id?: boolean
+    organizationId?: boolean
+    key?: boolean
+    label?: boolean
+    fieldType?: boolean
+    placeholder?: boolean
+    helpText?: boolean
+    options?: boolean
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type IntakeFieldOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "organizationId" | "key" | "label" | "fieldType" | "placeholder" | "helpText" | "options" | "isRequired" | "showOnCaseDetail" | "isActive" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["intakeField"]>
+  export type IntakeFieldInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type IntakeFieldIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+  export type IntakeFieldIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    organization?: boolean | OrganizationDefaultArgs<ExtArgs>
+  }
+
+  export type $IntakeFieldPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "IntakeField"
+    objects: {
+      organization: Prisma.$OrganizationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      organizationId: string
+      key: string
+      label: string
+      fieldType: $Enums.IntakeFieldType
+      placeholder: string | null
+      helpText: string | null
+      options: Prisma.JsonValue | null
+      isRequired: boolean
+      showOnCaseDetail: boolean
+      isActive: boolean
+      sortOrder: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["intakeField"]>
+    composites: {}
+  }
+
+  type IntakeFieldGetPayload<S extends boolean | null | undefined | IntakeFieldDefaultArgs> = $Result.GetResult<Prisma.$IntakeFieldPayload, S>
+
+  type IntakeFieldCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<IntakeFieldFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: IntakeFieldCountAggregateInputType | true
+    }
+
+  export interface IntakeFieldDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['IntakeField'], meta: { name: 'IntakeField' } }
+    /**
+     * Find zero or one IntakeField that matches the filter.
+     * @param {IntakeFieldFindUniqueArgs} args - Arguments to find a IntakeField
+     * @example
+     * // Get one IntakeField
+     * const intakeField = await prisma.intakeField.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends IntakeFieldFindUniqueArgs>(args: SelectSubset<T, IntakeFieldFindUniqueArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one IntakeField that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {IntakeFieldFindUniqueOrThrowArgs} args - Arguments to find a IntakeField
+     * @example
+     * // Get one IntakeField
+     * const intakeField = await prisma.intakeField.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends IntakeFieldFindUniqueOrThrowArgs>(args: SelectSubset<T, IntakeFieldFindUniqueOrThrowArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IntakeField that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldFindFirstArgs} args - Arguments to find a IntakeField
+     * @example
+     * // Get one IntakeField
+     * const intakeField = await prisma.intakeField.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends IntakeFieldFindFirstArgs>(args?: SelectSubset<T, IntakeFieldFindFirstArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first IntakeField that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldFindFirstOrThrowArgs} args - Arguments to find a IntakeField
+     * @example
+     * // Get one IntakeField
+     * const intakeField = await prisma.intakeField.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends IntakeFieldFindFirstOrThrowArgs>(args?: SelectSubset<T, IntakeFieldFindFirstOrThrowArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more IntakeFields that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all IntakeFields
+     * const intakeFields = await prisma.intakeField.findMany()
+     * 
+     * // Get first 10 IntakeFields
+     * const intakeFields = await prisma.intakeField.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const intakeFieldWithIdOnly = await prisma.intakeField.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends IntakeFieldFindManyArgs>(args?: SelectSubset<T, IntakeFieldFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a IntakeField.
+     * @param {IntakeFieldCreateArgs} args - Arguments to create a IntakeField.
+     * @example
+     * // Create one IntakeField
+     * const IntakeField = await prisma.intakeField.create({
+     *   data: {
+     *     // ... data to create a IntakeField
+     *   }
+     * })
+     * 
+     */
+    create<T extends IntakeFieldCreateArgs>(args: SelectSubset<T, IntakeFieldCreateArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many IntakeFields.
+     * @param {IntakeFieldCreateManyArgs} args - Arguments to create many IntakeFields.
+     * @example
+     * // Create many IntakeFields
+     * const intakeField = await prisma.intakeField.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends IntakeFieldCreateManyArgs>(args?: SelectSubset<T, IntakeFieldCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many IntakeFields and returns the data saved in the database.
+     * @param {IntakeFieldCreateManyAndReturnArgs} args - Arguments to create many IntakeFields.
+     * @example
+     * // Create many IntakeFields
+     * const intakeField = await prisma.intakeField.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many IntakeFields and only return the `id`
+     * const intakeFieldWithIdOnly = await prisma.intakeField.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends IntakeFieldCreateManyAndReturnArgs>(args?: SelectSubset<T, IntakeFieldCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a IntakeField.
+     * @param {IntakeFieldDeleteArgs} args - Arguments to delete one IntakeField.
+     * @example
+     * // Delete one IntakeField
+     * const IntakeField = await prisma.intakeField.delete({
+     *   where: {
+     *     // ... filter to delete one IntakeField
+     *   }
+     * })
+     * 
+     */
+    delete<T extends IntakeFieldDeleteArgs>(args: SelectSubset<T, IntakeFieldDeleteArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one IntakeField.
+     * @param {IntakeFieldUpdateArgs} args - Arguments to update one IntakeField.
+     * @example
+     * // Update one IntakeField
+     * const intakeField = await prisma.intakeField.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends IntakeFieldUpdateArgs>(args: SelectSubset<T, IntakeFieldUpdateArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more IntakeFields.
+     * @param {IntakeFieldDeleteManyArgs} args - Arguments to filter IntakeFields to delete.
+     * @example
+     * // Delete a few IntakeFields
+     * const { count } = await prisma.intakeField.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends IntakeFieldDeleteManyArgs>(args?: SelectSubset<T, IntakeFieldDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IntakeFields.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many IntakeFields
+     * const intakeField = await prisma.intakeField.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends IntakeFieldUpdateManyArgs>(args: SelectSubset<T, IntakeFieldUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more IntakeFields and returns the data updated in the database.
+     * @param {IntakeFieldUpdateManyAndReturnArgs} args - Arguments to update many IntakeFields.
+     * @example
+     * // Update many IntakeFields
+     * const intakeField = await prisma.intakeField.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more IntakeFields and only return the `id`
+     * const intakeFieldWithIdOnly = await prisma.intakeField.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends IntakeFieldUpdateManyAndReturnArgs>(args: SelectSubset<T, IntakeFieldUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one IntakeField.
+     * @param {IntakeFieldUpsertArgs} args - Arguments to update or create a IntakeField.
+     * @example
+     * // Update or create a IntakeField
+     * const intakeField = await prisma.intakeField.upsert({
+     *   create: {
+     *     // ... data to create a IntakeField
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the IntakeField we want to update
+     *   }
+     * })
+     */
+    upsert<T extends IntakeFieldUpsertArgs>(args: SelectSubset<T, IntakeFieldUpsertArgs<ExtArgs>>): Prisma__IntakeFieldClient<$Result.GetResult<Prisma.$IntakeFieldPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of IntakeFields.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldCountArgs} args - Arguments to filter IntakeFields to count.
+     * @example
+     * // Count the number of IntakeFields
+     * const count = await prisma.intakeField.count({
+     *   where: {
+     *     // ... the filter for the IntakeFields we want to count
+     *   }
+     * })
+    **/
+    count<T extends IntakeFieldCountArgs>(
+      args?: Subset<T, IntakeFieldCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], IntakeFieldCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a IntakeField.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends IntakeFieldAggregateArgs>(args: Subset<T, IntakeFieldAggregateArgs>): Prisma.PrismaPromise<GetIntakeFieldAggregateType<T>>
+
+    /**
+     * Group by IntakeField.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {IntakeFieldGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends IntakeFieldGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: IntakeFieldGroupByArgs['orderBy'] }
+        : { orderBy?: IntakeFieldGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, IntakeFieldGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetIntakeFieldGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the IntakeField model
+   */
+  readonly fields: IntakeFieldFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for IntakeField.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__IntakeFieldClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    organization<T extends OrganizationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrganizationDefaultArgs<ExtArgs>>): Prisma__OrganizationClient<$Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the IntakeField model
+   */
+  interface IntakeFieldFieldRefs {
+    readonly id: FieldRef<"IntakeField", 'String'>
+    readonly organizationId: FieldRef<"IntakeField", 'String'>
+    readonly key: FieldRef<"IntakeField", 'String'>
+    readonly label: FieldRef<"IntakeField", 'String'>
+    readonly fieldType: FieldRef<"IntakeField", 'IntakeFieldType'>
+    readonly placeholder: FieldRef<"IntakeField", 'String'>
+    readonly helpText: FieldRef<"IntakeField", 'String'>
+    readonly options: FieldRef<"IntakeField", 'Json'>
+    readonly isRequired: FieldRef<"IntakeField", 'Boolean'>
+    readonly showOnCaseDetail: FieldRef<"IntakeField", 'Boolean'>
+    readonly isActive: FieldRef<"IntakeField", 'Boolean'>
+    readonly sortOrder: FieldRef<"IntakeField", 'Int'>
+    readonly createdAt: FieldRef<"IntakeField", 'DateTime'>
+    readonly updatedAt: FieldRef<"IntakeField", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * IntakeField findUnique
+   */
+  export type IntakeFieldFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which IntakeField to fetch.
+     */
+    where: IntakeFieldWhereUniqueInput
+  }
+
+  /**
+   * IntakeField findUniqueOrThrow
+   */
+  export type IntakeFieldFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which IntakeField to fetch.
+     */
+    where: IntakeFieldWhereUniqueInput
+  }
+
+  /**
+   * IntakeField findFirst
+   */
+  export type IntakeFieldFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which IntakeField to fetch.
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IntakeFields to fetch.
+     */
+    orderBy?: IntakeFieldOrderByWithRelationInput | IntakeFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IntakeFields.
+     */
+    cursor?: IntakeFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IntakeFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IntakeFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IntakeFields.
+     */
+    distinct?: IntakeFieldScalarFieldEnum | IntakeFieldScalarFieldEnum[]
+  }
+
+  /**
+   * IntakeField findFirstOrThrow
+   */
+  export type IntakeFieldFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which IntakeField to fetch.
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IntakeFields to fetch.
+     */
+    orderBy?: IntakeFieldOrderByWithRelationInput | IntakeFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for IntakeFields.
+     */
+    cursor?: IntakeFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IntakeFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IntakeFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IntakeFields.
+     */
+    distinct?: IntakeFieldScalarFieldEnum | IntakeFieldScalarFieldEnum[]
+  }
+
+  /**
+   * IntakeField findMany
+   */
+  export type IntakeFieldFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter, which IntakeFields to fetch.
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of IntakeFields to fetch.
+     */
+    orderBy?: IntakeFieldOrderByWithRelationInput | IntakeFieldOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing IntakeFields.
+     */
+    cursor?: IntakeFieldWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` IntakeFields from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` IntakeFields.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of IntakeFields.
+     */
+    distinct?: IntakeFieldScalarFieldEnum | IntakeFieldScalarFieldEnum[]
+  }
+
+  /**
+   * IntakeField create
+   */
+  export type IntakeFieldCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * The data needed to create a IntakeField.
+     */
+    data: XOR<IntakeFieldCreateInput, IntakeFieldUncheckedCreateInput>
+  }
+
+  /**
+   * IntakeField createMany
+   */
+  export type IntakeFieldCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many IntakeFields.
+     */
+    data: IntakeFieldCreateManyInput | IntakeFieldCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * IntakeField createManyAndReturn
+   */
+  export type IntakeFieldCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * The data used to create many IntakeFields.
+     */
+    data: IntakeFieldCreateManyInput | IntakeFieldCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IntakeField update
+   */
+  export type IntakeFieldUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * The data needed to update a IntakeField.
+     */
+    data: XOR<IntakeFieldUpdateInput, IntakeFieldUncheckedUpdateInput>
+    /**
+     * Choose, which IntakeField to update.
+     */
+    where: IntakeFieldWhereUniqueInput
+  }
+
+  /**
+   * IntakeField updateMany
+   */
+  export type IntakeFieldUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update IntakeFields.
+     */
+    data: XOR<IntakeFieldUpdateManyMutationInput, IntakeFieldUncheckedUpdateManyInput>
+    /**
+     * Filter which IntakeFields to update
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * Limit how many IntakeFields to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * IntakeField updateManyAndReturn
+   */
+  export type IntakeFieldUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * The data used to update IntakeFields.
+     */
+    data: XOR<IntakeFieldUpdateManyMutationInput, IntakeFieldUncheckedUpdateManyInput>
+    /**
+     * Filter which IntakeFields to update
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * Limit how many IntakeFields to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * IntakeField upsert
+   */
+  export type IntakeFieldUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * The filter to search for the IntakeField to update in case it exists.
+     */
+    where: IntakeFieldWhereUniqueInput
+    /**
+     * In case the IntakeField found by the `where` argument doesn't exist, create a new IntakeField with this data.
+     */
+    create: XOR<IntakeFieldCreateInput, IntakeFieldUncheckedCreateInput>
+    /**
+     * In case the IntakeField was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<IntakeFieldUpdateInput, IntakeFieldUncheckedUpdateInput>
+  }
+
+  /**
+   * IntakeField delete
+   */
+  export type IntakeFieldDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
+    /**
+     * Filter which IntakeField to delete.
+     */
+    where: IntakeFieldWhereUniqueInput
+  }
+
+  /**
+   * IntakeField deleteMany
+   */
+  export type IntakeFieldDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which IntakeFields to delete
+     */
+    where?: IntakeFieldWhereInput
+    /**
+     * Limit how many IntakeFields to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * IntakeField without action
+   */
+  export type IntakeFieldDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the IntakeField
+     */
+    select?: IntakeFieldSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the IntakeField
+     */
+    omit?: IntakeFieldOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: IntakeFieldInclude<ExtArgs> | null
   }
 
 
@@ -3410,7 +4819,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash: string | null
     role: $Enums.Role
     createdAt: Date
     updatedAt: Date
@@ -3515,7 +4924,7 @@ export namespace Prisma {
       organizationId: string
       name: string
       email: string
-      passwordHash: string
+      passwordHash: string | null
       role: $Enums.Role
       createdAt: Date
       updatedAt: Date
@@ -12936,10 +14345,34 @@ export namespace Prisma {
     slug: 'slug',
     industry: 'industry',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    appName: 'appName',
+    caseLabel: 'caseLabel',
+    customerLabel: 'customerLabel',
+    industryTemplateKey: 'industryTemplateKey'
   };
 
   export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+  export const IntakeFieldScalarFieldEnum: {
+    id: 'id',
+    organizationId: 'organizationId',
+    key: 'key',
+    label: 'label',
+    fieldType: 'fieldType',
+    placeholder: 'placeholder',
+    helpText: 'helpText',
+    options: 'options',
+    isRequired: 'isRequired',
+    showOnCaseDetail: 'showOnCaseDetail',
+    isActive: 'isActive',
+    sortOrder: 'sortOrder',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type IntakeFieldScalarFieldEnum = (typeof IntakeFieldScalarFieldEnum)[keyof typeof IntakeFieldScalarFieldEnum]
 
 
   export const UserScalarFieldEnum: {
@@ -13074,6 +14507,14 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const JsonNullValueInput: {
     JsonNull: typeof JsonNull
   };
@@ -13140,16 +14581,37 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Role'
+   * Reference to a field of type 'IntakeFieldType'
    */
-  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+  export type EnumIntakeFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntakeFieldType'>
     
 
 
   /**
-   * Reference to a field of type 'Role[]'
+   * Reference to a field of type 'IntakeFieldType[]'
    */
-  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+  export type ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntakeFieldType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -13168,9 +14630,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'Role'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role[]'
+   */
+  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
     
 
 
@@ -13199,20 +14668,6 @@ export namespace Prisma {
    * Reference to a field of type 'Source[]'
    */
   export type ListEnumSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Source[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -13257,6 +14712,10 @@ export namespace Prisma {
     industry?: StringFilter<"Organization"> | string
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
+    appName?: StringNullableFilter<"Organization"> | string | null
+    caseLabel?: StringNullableFilter<"Organization"> | string | null
+    customerLabel?: StringNullableFilter<"Organization"> | string | null
+    industryTemplateKey?: StringNullableFilter<"Organization"> | string | null
     users?: UserListRelationFilter
     customers?: CustomerListRelationFilter
     cases?: CaseListRelationFilter
@@ -13265,6 +14724,7 @@ export namespace Prisma {
     comments?: CaseCommentListRelationFilter
     attachments?: CaseAttachmentListRelationFilter
     activityEvents?: CaseActivityEventListRelationFilter
+    intakeFields?: IntakeFieldListRelationFilter
   }
 
   export type OrganizationOrderByWithRelationInput = {
@@ -13274,6 +14734,10 @@ export namespace Prisma {
     industry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    appName?: SortOrderInput | SortOrder
+    caseLabel?: SortOrderInput | SortOrder
+    customerLabel?: SortOrderInput | SortOrder
+    industryTemplateKey?: SortOrderInput | SortOrder
     users?: UserOrderByRelationAggregateInput
     customers?: CustomerOrderByRelationAggregateInput
     cases?: CaseOrderByRelationAggregateInput
@@ -13282,6 +14746,7 @@ export namespace Prisma {
     comments?: CaseCommentOrderByRelationAggregateInput
     attachments?: CaseAttachmentOrderByRelationAggregateInput
     activityEvents?: CaseActivityEventOrderByRelationAggregateInput
+    intakeFields?: IntakeFieldOrderByRelationAggregateInput
   }
 
   export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -13294,6 +14759,10 @@ export namespace Prisma {
     industry?: StringFilter<"Organization"> | string
     createdAt?: DateTimeFilter<"Organization"> | Date | string
     updatedAt?: DateTimeFilter<"Organization"> | Date | string
+    appName?: StringNullableFilter<"Organization"> | string | null
+    caseLabel?: StringNullableFilter<"Organization"> | string | null
+    customerLabel?: StringNullableFilter<"Organization"> | string | null
+    industryTemplateKey?: StringNullableFilter<"Organization"> | string | null
     users?: UserListRelationFilter
     customers?: CustomerListRelationFilter
     cases?: CaseListRelationFilter
@@ -13302,6 +14771,7 @@ export namespace Prisma {
     comments?: CaseCommentListRelationFilter
     attachments?: CaseAttachmentListRelationFilter
     activityEvents?: CaseActivityEventListRelationFilter
+    intakeFields?: IntakeFieldListRelationFilter
   }, "id" | "slug">
 
   export type OrganizationOrderByWithAggregationInput = {
@@ -13311,6 +14781,10 @@ export namespace Prisma {
     industry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    appName?: SortOrderInput | SortOrder
+    caseLabel?: SortOrderInput | SortOrder
+    customerLabel?: SortOrderInput | SortOrder
+    industryTemplateKey?: SortOrderInput | SortOrder
     _count?: OrganizationCountOrderByAggregateInput
     _max?: OrganizationMaxOrderByAggregateInput
     _min?: OrganizationMinOrderByAggregateInput
@@ -13326,6 +14800,113 @@ export namespace Prisma {
     industry?: StringWithAggregatesFilter<"Organization"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Organization"> | Date | string
+    appName?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    caseLabel?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    customerLabel?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+    industryTemplateKey?: StringNullableWithAggregatesFilter<"Organization"> | string | null
+  }
+
+  export type IntakeFieldWhereInput = {
+    AND?: IntakeFieldWhereInput | IntakeFieldWhereInput[]
+    OR?: IntakeFieldWhereInput[]
+    NOT?: IntakeFieldWhereInput | IntakeFieldWhereInput[]
+    id?: StringFilter<"IntakeField"> | string
+    organizationId?: StringFilter<"IntakeField"> | string
+    key?: StringFilter<"IntakeField"> | string
+    label?: StringFilter<"IntakeField"> | string
+    fieldType?: EnumIntakeFieldTypeFilter<"IntakeField"> | $Enums.IntakeFieldType
+    placeholder?: StringNullableFilter<"IntakeField"> | string | null
+    helpText?: StringNullableFilter<"IntakeField"> | string | null
+    options?: JsonNullableFilter<"IntakeField">
+    isRequired?: BoolFilter<"IntakeField"> | boolean
+    showOnCaseDetail?: BoolFilter<"IntakeField"> | boolean
+    isActive?: BoolFilter<"IntakeField"> | boolean
+    sortOrder?: IntFilter<"IntakeField"> | number
+    createdAt?: DateTimeFilter<"IntakeField"> | Date | string
+    updatedAt?: DateTimeFilter<"IntakeField"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }
+
+  export type IntakeFieldOrderByWithRelationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    key?: SortOrder
+    label?: SortOrder
+    fieldType?: SortOrder
+    placeholder?: SortOrderInput | SortOrder
+    helpText?: SortOrderInput | SortOrder
+    options?: SortOrderInput | SortOrder
+    isRequired?: SortOrder
+    showOnCaseDetail?: SortOrder
+    isActive?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    organization?: OrganizationOrderByWithRelationInput
+  }
+
+  export type IntakeFieldWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    organizationId_key?: IntakeFieldOrganizationIdKeyCompoundUniqueInput
+    AND?: IntakeFieldWhereInput | IntakeFieldWhereInput[]
+    OR?: IntakeFieldWhereInput[]
+    NOT?: IntakeFieldWhereInput | IntakeFieldWhereInput[]
+    organizationId?: StringFilter<"IntakeField"> | string
+    key?: StringFilter<"IntakeField"> | string
+    label?: StringFilter<"IntakeField"> | string
+    fieldType?: EnumIntakeFieldTypeFilter<"IntakeField"> | $Enums.IntakeFieldType
+    placeholder?: StringNullableFilter<"IntakeField"> | string | null
+    helpText?: StringNullableFilter<"IntakeField"> | string | null
+    options?: JsonNullableFilter<"IntakeField">
+    isRequired?: BoolFilter<"IntakeField"> | boolean
+    showOnCaseDetail?: BoolFilter<"IntakeField"> | boolean
+    isActive?: BoolFilter<"IntakeField"> | boolean
+    sortOrder?: IntFilter<"IntakeField"> | number
+    createdAt?: DateTimeFilter<"IntakeField"> | Date | string
+    updatedAt?: DateTimeFilter<"IntakeField"> | Date | string
+    organization?: XOR<OrganizationScalarRelationFilter, OrganizationWhereInput>
+  }, "id" | "organizationId_key">
+
+  export type IntakeFieldOrderByWithAggregationInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    key?: SortOrder
+    label?: SortOrder
+    fieldType?: SortOrder
+    placeholder?: SortOrderInput | SortOrder
+    helpText?: SortOrderInput | SortOrder
+    options?: SortOrderInput | SortOrder
+    isRequired?: SortOrder
+    showOnCaseDetail?: SortOrder
+    isActive?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: IntakeFieldCountOrderByAggregateInput
+    _avg?: IntakeFieldAvgOrderByAggregateInput
+    _max?: IntakeFieldMaxOrderByAggregateInput
+    _min?: IntakeFieldMinOrderByAggregateInput
+    _sum?: IntakeFieldSumOrderByAggregateInput
+  }
+
+  export type IntakeFieldScalarWhereWithAggregatesInput = {
+    AND?: IntakeFieldScalarWhereWithAggregatesInput | IntakeFieldScalarWhereWithAggregatesInput[]
+    OR?: IntakeFieldScalarWhereWithAggregatesInput[]
+    NOT?: IntakeFieldScalarWhereWithAggregatesInput | IntakeFieldScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"IntakeField"> | string
+    organizationId?: StringWithAggregatesFilter<"IntakeField"> | string
+    key?: StringWithAggregatesFilter<"IntakeField"> | string
+    label?: StringWithAggregatesFilter<"IntakeField"> | string
+    fieldType?: EnumIntakeFieldTypeWithAggregatesFilter<"IntakeField"> | $Enums.IntakeFieldType
+    placeholder?: StringNullableWithAggregatesFilter<"IntakeField"> | string | null
+    helpText?: StringNullableWithAggregatesFilter<"IntakeField"> | string | null
+    options?: JsonNullableWithAggregatesFilter<"IntakeField">
+    isRequired?: BoolWithAggregatesFilter<"IntakeField"> | boolean
+    showOnCaseDetail?: BoolWithAggregatesFilter<"IntakeField"> | boolean
+    isActive?: BoolWithAggregatesFilter<"IntakeField"> | boolean
+    sortOrder?: IntWithAggregatesFilter<"IntakeField"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"IntakeField"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"IntakeField"> | Date | string
   }
 
   export type UserWhereInput = {
@@ -13336,7 +14917,7 @@ export namespace Prisma {
     organizationId?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
-    passwordHash?: StringFilter<"User"> | string
+    passwordHash?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -13352,7 +14933,7 @@ export namespace Prisma {
     organizationId?: SortOrder
     name?: SortOrder
     email?: SortOrder
-    passwordHash?: SortOrder
+    passwordHash?: SortOrderInput | SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13371,7 +14952,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     organizationId?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
-    passwordHash?: StringFilter<"User"> | string
+    passwordHash?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -13387,7 +14968,7 @@ export namespace Prisma {
     organizationId?: SortOrder
     name?: SortOrder
     email?: SortOrder
-    passwordHash?: SortOrder
+    passwordHash?: SortOrderInput | SortOrder
     role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -13404,7 +14985,7 @@ export namespace Prisma {
     organizationId?: StringWithAggregatesFilter<"User"> | string
     name?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
-    passwordHash?: StringWithAggregatesFilter<"User"> | string
+    passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -14039,6 +15620,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -14047,6 +15632,7 @@ export namespace Prisma {
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateInput = {
@@ -14056,6 +15642,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14064,6 +15654,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUpdateInput = {
@@ -14073,6 +15664,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -14081,6 +15676,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateInput = {
@@ -14090,6 +15686,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14098,6 +15698,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationCreateManyInput = {
@@ -14107,6 +15708,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
   }
 
   export type OrganizationUpdateManyMutationInput = {
@@ -14116,6 +15721,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrganizationUncheckedUpdateManyInput = {
@@ -14125,13 +15734,135 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type IntakeFieldCreateInput = {
+    id?: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    organization: OrganizationCreateNestedOneWithoutIntakeFieldsInput
+  }
+
+  export type IntakeFieldUncheckedCreateInput = {
+    id?: string
+    organizationId: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IntakeFieldUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    organization?: OrganizationUpdateOneRequiredWithoutIntakeFieldsNestedInput
+  }
+
+  export type IntakeFieldUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IntakeFieldCreateManyInput = {
+    id?: string
+    organizationId: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IntakeFieldUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IntakeFieldUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    organizationId?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateInput = {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14147,7 +15878,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14161,7 +15892,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14177,7 +15908,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14192,7 +15923,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -14202,7 +15933,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14213,7 +15944,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -14884,6 +16615,21 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type UserListRelationFilter = {
     every?: UserWhereInput
     some?: UserWhereInput
@@ -14932,6 +16678,17 @@ export namespace Prisma {
     none?: CaseActivityEventWhereInput
   }
 
+  export type IntakeFieldListRelationFilter = {
+    every?: IntakeFieldWhereInput
+    some?: IntakeFieldWhereInput
+    none?: IntakeFieldWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type UserOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -14964,6 +16721,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type IntakeFieldOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type OrganizationCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -14971,6 +16732,10 @@ export namespace Prisma {
     industry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    appName?: SortOrder
+    caseLabel?: SortOrder
+    customerLabel?: SortOrder
+    industryTemplateKey?: SortOrder
   }
 
   export type OrganizationMaxOrderByAggregateInput = {
@@ -14980,6 +16745,10 @@ export namespace Prisma {
     industry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    appName?: SortOrder
+    caseLabel?: SortOrder
+    customerLabel?: SortOrder
+    industryTemplateKey?: SortOrder
   }
 
   export type OrganizationMinOrderByAggregateInput = {
@@ -14989,6 +16758,10 @@ export namespace Prisma {
     industry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    appName?: SortOrder
+    caseLabel?: SortOrder
+    customerLabel?: SortOrder
+    industryTemplateKey?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -15023,16 +16796,202 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumIntakeFieldTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.IntakeFieldType | EnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumIntakeFieldTypeFilter<$PrismaModel> | $Enums.IntakeFieldType
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type OrganizationScalarRelationFilter = {
     is?: OrganizationWhereInput
     isNot?: OrganizationWhereInput
+  }
+
+  export type IntakeFieldOrganizationIdKeyCompoundUniqueInput = {
+    organizationId: string
+    key: string
+  }
+
+  export type IntakeFieldCountOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    key?: SortOrder
+    label?: SortOrder
+    fieldType?: SortOrder
+    placeholder?: SortOrder
+    helpText?: SortOrder
+    options?: SortOrder
+    isRequired?: SortOrder
+    showOnCaseDetail?: SortOrder
+    isActive?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IntakeFieldAvgOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type IntakeFieldMaxOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    key?: SortOrder
+    label?: SortOrder
+    fieldType?: SortOrder
+    placeholder?: SortOrder
+    helpText?: SortOrder
+    isRequired?: SortOrder
+    showOnCaseDetail?: SortOrder
+    isActive?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IntakeFieldMinOrderByAggregateInput = {
+    id?: SortOrder
+    organizationId?: SortOrder
+    key?: SortOrder
+    label?: SortOrder
+    fieldType?: SortOrder
+    placeholder?: SortOrder
+    helpText?: SortOrder
+    isRequired?: SortOrder
+    showOnCaseDetail?: SortOrder
+    isActive?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type IntakeFieldSumOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type EnumIntakeFieldTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IntakeFieldType | EnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumIntakeFieldTypeWithAggregatesFilter<$PrismaModel> | $Enums.IntakeFieldType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIntakeFieldTypeFilter<$PrismaModel>
+    _max?: NestedEnumIntakeFieldTypeFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
   export type UserCountOrderByAggregateInput = {
@@ -15078,26 +17037,6 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type CustomerCountOrderByAggregateInput = {
     id?: SortOrder
     organizationId?: SortOrder
@@ -15129,24 +17068,6 @@ export namespace Prisma {
     externalReference?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type CaseCategoryOrganizationIdSlugCompoundUniqueInput = {
@@ -15182,22 +17103,6 @@ export namespace Prisma {
     description?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type WorkflowStatusOrganizationIdSlugCompoundUniqueInput = {
@@ -15250,30 +17155,6 @@ export namespace Prisma {
 
   export type WorkflowStatusSumOrderByAggregateInput = {
     sortOrder?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type EnumPriorityFilter<$PrismaModel = never> = {
@@ -15683,6 +17564,13 @@ export namespace Prisma {
     connect?: CaseActivityEventWhereUniqueInput | CaseActivityEventWhereUniqueInput[]
   }
 
+  export type IntakeFieldCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput> | IntakeFieldCreateWithoutOrganizationInput[] | IntakeFieldUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: IntakeFieldCreateOrConnectWithoutOrganizationInput | IntakeFieldCreateOrConnectWithoutOrganizationInput[]
+    createMany?: IntakeFieldCreateManyOrganizationInputEnvelope
+    connect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutOrganizationInput = {
     create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
@@ -15739,12 +17627,23 @@ export namespace Prisma {
     connect?: CaseActivityEventWhereUniqueInput | CaseActivityEventWhereUniqueInput[]
   }
 
+  export type IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput = {
+    create?: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput> | IntakeFieldCreateWithoutOrganizationInput[] | IntakeFieldUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: IntakeFieldCreateOrConnectWithoutOrganizationInput | IntakeFieldCreateOrConnectWithoutOrganizationInput[]
+    createMany?: IntakeFieldCreateManyOrganizationInputEnvelope
+    connect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type UserUpdateManyWithoutOrganizationNestedInput = {
@@ -15859,6 +17758,20 @@ export namespace Prisma {
     deleteMany?: CaseActivityEventScalarWhereInput | CaseActivityEventScalarWhereInput[]
   }
 
+  export type IntakeFieldUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput> | IntakeFieldCreateWithoutOrganizationInput[] | IntakeFieldUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: IntakeFieldCreateOrConnectWithoutOrganizationInput | IntakeFieldCreateOrConnectWithoutOrganizationInput[]
+    upsert?: IntakeFieldUpsertWithWhereUniqueWithoutOrganizationInput | IntakeFieldUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: IntakeFieldCreateManyOrganizationInputEnvelope
+    set?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    disconnect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    delete?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    connect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    update?: IntakeFieldUpdateWithWhereUniqueWithoutOrganizationInput | IntakeFieldUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: IntakeFieldUpdateManyWithWhereWithoutOrganizationInput | IntakeFieldUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: IntakeFieldScalarWhereInput | IntakeFieldScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutOrganizationNestedInput = {
     create?: XOR<UserCreateWithoutOrganizationInput, UserUncheckedCreateWithoutOrganizationInput> | UserCreateWithoutOrganizationInput[] | UserUncheckedCreateWithoutOrganizationInput[]
     connectOrCreate?: UserCreateOrConnectWithoutOrganizationInput | UserCreateOrConnectWithoutOrganizationInput[]
@@ -15969,6 +17882,50 @@ export namespace Prisma {
     update?: CaseActivityEventUpdateWithWhereUniqueWithoutOrganizationInput | CaseActivityEventUpdateWithWhereUniqueWithoutOrganizationInput[]
     updateMany?: CaseActivityEventUpdateManyWithWhereWithoutOrganizationInput | CaseActivityEventUpdateManyWithWhereWithoutOrganizationInput[]
     deleteMany?: CaseActivityEventScalarWhereInput | CaseActivityEventScalarWhereInput[]
+  }
+
+  export type IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput = {
+    create?: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput> | IntakeFieldCreateWithoutOrganizationInput[] | IntakeFieldUncheckedCreateWithoutOrganizationInput[]
+    connectOrCreate?: IntakeFieldCreateOrConnectWithoutOrganizationInput | IntakeFieldCreateOrConnectWithoutOrganizationInput[]
+    upsert?: IntakeFieldUpsertWithWhereUniqueWithoutOrganizationInput | IntakeFieldUpsertWithWhereUniqueWithoutOrganizationInput[]
+    createMany?: IntakeFieldCreateManyOrganizationInputEnvelope
+    set?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    disconnect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    delete?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    connect?: IntakeFieldWhereUniqueInput | IntakeFieldWhereUniqueInput[]
+    update?: IntakeFieldUpdateWithWhereUniqueWithoutOrganizationInput | IntakeFieldUpdateWithWhereUniqueWithoutOrganizationInput[]
+    updateMany?: IntakeFieldUpdateManyWithWhereWithoutOrganizationInput | IntakeFieldUpdateManyWithWhereWithoutOrganizationInput[]
+    deleteMany?: IntakeFieldScalarWhereInput | IntakeFieldScalarWhereInput[]
+  }
+
+  export type OrganizationCreateNestedOneWithoutIntakeFieldsInput = {
+    create?: XOR<OrganizationCreateWithoutIntakeFieldsInput, OrganizationUncheckedCreateWithoutIntakeFieldsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutIntakeFieldsInput
+    connect?: OrganizationWhereUniqueInput
+  }
+
+  export type EnumIntakeFieldTypeFieldUpdateOperationsInput = {
+    set?: $Enums.IntakeFieldType
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type OrganizationUpdateOneRequiredWithoutIntakeFieldsNestedInput = {
+    create?: XOR<OrganizationCreateWithoutIntakeFieldsInput, OrganizationUncheckedCreateWithoutIntakeFieldsInput>
+    connectOrCreate?: OrganizationCreateOrConnectWithoutIntakeFieldsInput
+    upsert?: OrganizationUpsertWithoutIntakeFieldsInput
+    connect?: OrganizationWhereUniqueInput
+    update?: XOR<XOR<OrganizationUpdateToOneWithWhereWithoutIntakeFieldsInput, OrganizationUpdateWithoutIntakeFieldsInput>, OrganizationUncheckedUpdateWithoutIntakeFieldsInput>
   }
 
   export type OrganizationCreateNestedOneWithoutUsersInput = {
@@ -16219,10 +18176,6 @@ export namespace Prisma {
     connect?: CaseActivityEventWhereUniqueInput | CaseActivityEventWhereUniqueInput[]
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type OrganizationUpdateOneRequiredWithoutCustomersNestedInput = {
     create?: XOR<OrganizationCreateWithoutCustomersInput, OrganizationUncheckedCreateWithoutCustomersInput>
     connectOrCreate?: OrganizationCreateOrConnectWithoutCustomersInput
@@ -16417,18 +18370,6 @@ export namespace Prisma {
     connectOrCreate?: CaseCreateOrConnectWithoutStatusInput | CaseCreateOrConnectWithoutStatusInput[]
     createMany?: CaseCreateManyStatusInputEnvelope
     connect?: CaseWhereUniqueInput | CaseWhereUniqueInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type OrganizationUpdateOneRequiredWithoutStatusesNestedInput = {
@@ -16896,6 +18837,20 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -16938,37 +18893,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -16997,9 +18921,57 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumIntakeFieldTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.IntakeFieldType | EnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumIntakeFieldTypeFilter<$PrismaModel> | $Enums.IntakeFieldType
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedEnumIntakeFieldTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.IntakeFieldType | EnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.IntakeFieldType[] | ListEnumIntakeFieldTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumIntakeFieldTypeWithAggregatesFilter<$PrismaModel> | $Enums.IntakeFieldType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumIntakeFieldTypeFilter<$PrismaModel>
+    _max?: NestedEnumIntakeFieldTypeFilter<$PrismaModel>
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -17029,12 +19001,21 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedEnumPriorityFilter<$PrismaModel = never> = {
@@ -17167,7 +19148,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17181,7 +19162,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -17453,6 +19434,48 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type IntakeFieldCreateWithoutOrganizationInput = {
+    id?: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IntakeFieldUncheckedCreateWithoutOrganizationInput = {
+    id?: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type IntakeFieldCreateOrConnectWithoutOrganizationInput = {
+    where: IntakeFieldWhereUniqueInput
+    create: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type IntakeFieldCreateManyOrganizationInputEnvelope = {
+    data: IntakeFieldCreateManyOrganizationInput | IntakeFieldCreateManyOrganizationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithWhereUniqueWithoutOrganizationInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutOrganizationInput, UserUncheckedUpdateWithoutOrganizationInput>
@@ -17477,7 +19500,7 @@ export namespace Prisma {
     organizationId?: StringFilter<"User"> | string
     name?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
-    passwordHash?: StringFilter<"User"> | string
+    passwordHash?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -17705,13 +19728,54 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"CaseActivityEvent"> | Date | string
   }
 
-  export type OrganizationCreateWithoutUsersInput = {
+  export type IntakeFieldUpsertWithWhereUniqueWithoutOrganizationInput = {
+    where: IntakeFieldWhereUniqueInput
+    update: XOR<IntakeFieldUpdateWithoutOrganizationInput, IntakeFieldUncheckedUpdateWithoutOrganizationInput>
+    create: XOR<IntakeFieldCreateWithoutOrganizationInput, IntakeFieldUncheckedCreateWithoutOrganizationInput>
+  }
+
+  export type IntakeFieldUpdateWithWhereUniqueWithoutOrganizationInput = {
+    where: IntakeFieldWhereUniqueInput
+    data: XOR<IntakeFieldUpdateWithoutOrganizationInput, IntakeFieldUncheckedUpdateWithoutOrganizationInput>
+  }
+
+  export type IntakeFieldUpdateManyWithWhereWithoutOrganizationInput = {
+    where: IntakeFieldScalarWhereInput
+    data: XOR<IntakeFieldUpdateManyMutationInput, IntakeFieldUncheckedUpdateManyWithoutOrganizationInput>
+  }
+
+  export type IntakeFieldScalarWhereInput = {
+    AND?: IntakeFieldScalarWhereInput | IntakeFieldScalarWhereInput[]
+    OR?: IntakeFieldScalarWhereInput[]
+    NOT?: IntakeFieldScalarWhereInput | IntakeFieldScalarWhereInput[]
+    id?: StringFilter<"IntakeField"> | string
+    organizationId?: StringFilter<"IntakeField"> | string
+    key?: StringFilter<"IntakeField"> | string
+    label?: StringFilter<"IntakeField"> | string
+    fieldType?: EnumIntakeFieldTypeFilter<"IntakeField"> | $Enums.IntakeFieldType
+    placeholder?: StringNullableFilter<"IntakeField"> | string | null
+    helpText?: StringNullableFilter<"IntakeField"> | string | null
+    options?: JsonNullableFilter<"IntakeField">
+    isRequired?: BoolFilter<"IntakeField"> | boolean
+    showOnCaseDetail?: BoolFilter<"IntakeField"> | boolean
+    isActive?: BoolFilter<"IntakeField"> | boolean
+    sortOrder?: IntFilter<"IntakeField"> | number
+    createdAt?: DateTimeFilter<"IntakeField"> | Date | string
+    updatedAt?: DateTimeFilter<"IntakeField"> | Date | string
+  }
+
+  export type OrganizationCreateWithoutIntakeFieldsInput = {
     id?: string
     name: string
     slug: string
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
+    users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryCreateNestedManyWithoutOrganizationInput
@@ -17721,13 +19785,18 @@ export namespace Prisma {
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
   }
 
-  export type OrganizationUncheckedCreateWithoutUsersInput = {
+  export type OrganizationUncheckedCreateWithoutIntakeFieldsInput = {
     id?: string
     name: string
     slug: string
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
+    users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17735,6 +19804,106 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationCreateOrConnectWithoutIntakeFieldsInput = {
+    where: OrganizationWhereUniqueInput
+    create: XOR<OrganizationCreateWithoutIntakeFieldsInput, OrganizationUncheckedCreateWithoutIntakeFieldsInput>
+  }
+
+  export type OrganizationUpsertWithoutIntakeFieldsInput = {
+    update: XOR<OrganizationUpdateWithoutIntakeFieldsInput, OrganizationUncheckedUpdateWithoutIntakeFieldsInput>
+    create: XOR<OrganizationCreateWithoutIntakeFieldsInput, OrganizationUncheckedCreateWithoutIntakeFieldsInput>
+    where?: OrganizationWhereInput
+  }
+
+  export type OrganizationUpdateToOneWithWhereWithoutIntakeFieldsInput = {
+    where?: OrganizationWhereInput
+    data: XOR<OrganizationUpdateWithoutIntakeFieldsInput, OrganizationUncheckedUpdateWithoutIntakeFieldsInput>
+  }
+
+  export type OrganizationUpdateWithoutIntakeFieldsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    industry?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUpdateManyWithoutOrganizationNestedInput
+    customers?: CustomerUpdateManyWithoutOrganizationNestedInput
+    cases?: CaseUpdateManyWithoutOrganizationNestedInput
+    categories?: CaseCategoryUpdateManyWithoutOrganizationNestedInput
+    statuses?: WorkflowStatusUpdateManyWithoutOrganizationNestedInput
+    comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
+    attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
+    activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationUncheckedUpdateWithoutIntakeFieldsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    industry?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
+    users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
+    cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
+    categories?: CaseCategoryUncheckedUpdateManyWithoutOrganizationNestedInput
+    statuses?: WorkflowStatusUncheckedUpdateManyWithoutOrganizationNestedInput
+    comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
+    attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
+    activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  }
+
+  export type OrganizationCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    industry?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
+    customers?: CustomerCreateNestedManyWithoutOrganizationInput
+    cases?: CaseCreateNestedManyWithoutOrganizationInput
+    categories?: CaseCategoryCreateNestedManyWithoutOrganizationInput
+    statuses?: WorkflowStatusCreateNestedManyWithoutOrganizationInput
+    comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
+    attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
+    activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
+  }
+
+  export type OrganizationUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    industry?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
+    customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
+    cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
+    categories?: CaseCategoryUncheckedCreateNestedManyWithoutOrganizationInput
+    statuses?: WorkflowStatusUncheckedCreateNestedManyWithoutOrganizationInput
+    comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
+    attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
+    activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutUsersInput = {
@@ -17908,6 +20077,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUpdateManyWithoutOrganizationNestedInput
@@ -17915,6 +20088,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutUsersInput = {
@@ -17924,6 +20098,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17931,6 +20109,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithWhereUniqueWithoutAssignedUserInput = {
@@ -18004,6 +20183,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryCreateNestedManyWithoutOrganizationInput
@@ -18011,6 +20194,7 @@ export namespace Prisma {
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCustomersInput = {
@@ -18020,6 +20204,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18027,6 +20215,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCustomersInput = {
@@ -18200,6 +20389,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUpdateManyWithoutOrganizationNestedInput
@@ -18207,6 +20400,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCustomersInput = {
@@ -18216,6 +20410,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18223,6 +20421,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -18296,6 +20495,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -18303,6 +20506,7 @@ export namespace Prisma {
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCategoriesInput = {
@@ -18312,6 +20516,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18319,6 +20527,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCategoriesInput = {
@@ -18394,6 +20603,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -18401,6 +20614,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCategoriesInput = {
@@ -18410,6 +20624,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18417,6 +20635,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithWhereUniqueWithoutCategoryInput = {
@@ -18442,6 +20661,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -18449,6 +20672,7 @@ export namespace Prisma {
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutStatusesInput = {
@@ -18458,6 +20682,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18465,6 +20693,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutStatusesInput = {
@@ -18540,6 +20769,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -18547,6 +20780,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutStatusesInput = {
@@ -18556,6 +20790,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18563,6 +20801,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithWhereUniqueWithoutStatusInput = {
@@ -18588,6 +20827,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryCreateNestedManyWithoutOrganizationInput
@@ -18595,6 +20838,7 @@ export namespace Prisma {
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCasesInput = {
@@ -18604,6 +20848,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     categories?: CaseCategoryUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18611,6 +20859,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCasesInput = {
@@ -18655,7 +20904,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18670,7 +20919,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -18856,6 +21105,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUpdateManyWithoutOrganizationNestedInput
@@ -18863,6 +21116,7 @@ export namespace Prisma {
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCasesInput = {
@@ -18872,6 +21126,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     categories?: CaseCategoryUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18879,6 +21137,7 @@ export namespace Prisma {
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CustomerUpsertWithoutCasesInput = {
@@ -18935,7 +21194,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -18950,7 +21209,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19082,6 +21341,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -19089,6 +21352,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutCommentsInput = {
@@ -19098,6 +21362,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19105,6 +21373,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutCommentsInput = {
@@ -19161,7 +21430,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19176,7 +21445,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19241,6 +21510,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -19248,6 +21521,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutCommentsInput = {
@@ -19257,6 +21531,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19264,6 +21542,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithoutCommentsInput = {
@@ -19332,7 +21611,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19347,7 +21626,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19402,6 +21681,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -19409,6 +21692,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusCreateNestedManyWithoutOrganizationInput
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutAttachmentsInput = {
@@ -19418,6 +21702,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19425,6 +21713,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedCreateNestedManyWithoutOrganizationInput
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     activityEvents?: CaseActivityEventUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutAttachmentsInput = {
@@ -19481,7 +21770,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19496,7 +21785,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19561,6 +21850,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -19568,6 +21861,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUpdateManyWithoutOrganizationNestedInput
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutAttachmentsInput = {
@@ -19577,6 +21871,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19584,6 +21882,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedUpdateManyWithoutOrganizationNestedInput
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     activityEvents?: CaseActivityEventUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithoutAttachmentsInput = {
@@ -19652,7 +21951,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19667,7 +21966,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19722,6 +22021,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserCreateNestedManyWithoutOrganizationInput
     customers?: CustomerCreateNestedManyWithoutOrganizationInput
     cases?: CaseCreateNestedManyWithoutOrganizationInput
@@ -19729,6 +22032,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusCreateNestedManyWithoutOrganizationInput
     comments?: CaseCommentCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationUncheckedCreateWithoutActivityEventsInput = {
@@ -19738,6 +22042,10 @@ export namespace Prisma {
     industry?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    appName?: string | null
+    caseLabel?: string | null
+    customerLabel?: string | null
+    industryTemplateKey?: string | null
     users?: UserUncheckedCreateNestedManyWithoutOrganizationInput
     customers?: CustomerUncheckedCreateNestedManyWithoutOrganizationInput
     cases?: CaseUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19745,6 +22053,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedCreateNestedManyWithoutOrganizationInput
     comments?: CaseCommentUncheckedCreateNestedManyWithoutOrganizationInput
     attachments?: CaseAttachmentUncheckedCreateNestedManyWithoutOrganizationInput
+    intakeFields?: IntakeFieldUncheckedCreateNestedManyWithoutOrganizationInput
   }
 
   export type OrganizationCreateOrConnectWithoutActivityEventsInput = {
@@ -19801,7 +22110,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19816,7 +22125,7 @@ export namespace Prisma {
     organizationId: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -19881,6 +22190,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUpdateManyWithoutOrganizationNestedInput
@@ -19888,6 +22201,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUpdateManyWithoutOrganizationNestedInput
     comments?: CaseCommentUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUpdateManyWithoutOrganizationNestedInput
   }
 
   export type OrganizationUncheckedUpdateWithoutActivityEventsInput = {
@@ -19897,6 +22211,10 @@ export namespace Prisma {
     industry?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    appName?: NullableStringFieldUpdateOperationsInput | string | null
+    caseLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    customerLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    industryTemplateKey?: NullableStringFieldUpdateOperationsInput | string | null
     users?: UserUncheckedUpdateManyWithoutOrganizationNestedInput
     customers?: CustomerUncheckedUpdateManyWithoutOrganizationNestedInput
     cases?: CaseUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19904,6 +22222,7 @@ export namespace Prisma {
     statuses?: WorkflowStatusUncheckedUpdateManyWithoutOrganizationNestedInput
     comments?: CaseCommentUncheckedUpdateManyWithoutOrganizationNestedInput
     attachments?: CaseAttachmentUncheckedUpdateManyWithoutOrganizationNestedInput
+    intakeFields?: IntakeFieldUncheckedUpdateManyWithoutOrganizationNestedInput
   }
 
   export type CaseUpsertWithoutActivityEventsInput = {
@@ -19972,7 +22291,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19987,7 +22306,7 @@ export namespace Prisma {
     organizationId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20039,7 +22358,7 @@ export namespace Prisma {
     id?: string
     name: string
     email: string
-    passwordHash: string
+    passwordHash?: string | null
     role: $Enums.Role
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -20127,11 +22446,27 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type IntakeFieldCreateManyOrganizationInput = {
+    id?: string
+    key: string
+    label: string
+    fieldType: $Enums.IntakeFieldType
+    placeholder?: string | null
+    helpText?: string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: boolean
+    showOnCaseDetail?: boolean
+    isActive?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutOrganizationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20145,7 +22480,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20159,7 +22494,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
-    passwordHash?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20427,6 +22762,54 @@ export namespace Prisma {
     eventType?: StringFieldUpdateOperationsInput | string
     metadata?: JsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IntakeFieldUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IntakeFieldUncheckedUpdateWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type IntakeFieldUncheckedUpdateManyWithoutOrganizationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    fieldType?: EnumIntakeFieldTypeFieldUpdateOperationsInput | $Enums.IntakeFieldType
+    placeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    helpText?: NullableStringFieldUpdateOperationsInput | string | null
+    options?: NullableJsonNullValueInput | InputJsonValue
+    isRequired?: BoolFieldUpdateOperationsInput | boolean
+    showOnCaseDetail?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CaseCreateManyAssignedUserInput = {
