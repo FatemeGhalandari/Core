@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "organizations" ADD COLUMN     "industryTemplateKey" TEXT,
+ALTER COLUMN "appName" DROP NOT NULL,
+ALTER COLUMN "appName" DROP DEFAULT,
+ALTER COLUMN "caseLabel" DROP NOT NULL,
+ALTER COLUMN "caseLabel" DROP DEFAULT,
+ALTER COLUMN "customerLabel" DROP NOT NULL,
+ALTER COLUMN "customerLabel" DROP DEFAULT;
