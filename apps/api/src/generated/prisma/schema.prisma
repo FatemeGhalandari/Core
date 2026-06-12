@@ -30,6 +30,18 @@ enum Visibility {
   internal
 }
 
+enum IntakeFieldType {
+  text
+  textarea
+  email
+  phone
+  number
+  date
+  select
+  multiselect
+  checkbox
+}
+
 model Organization {
   id        String   @id @default(uuid())
   name      String
@@ -37,6 +49,11 @@ model Organization {
   industry  String   @default("core")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  appName             String?
+  caseLabel           String?
+  customerLabel       String?
+  industryTemplateKey String?
 
   users          User[]
   customers      Customer[]
@@ -46,8 +63,33 @@ model Organization {
   comments       CaseComment[]
   attachments    CaseAttachment[]
   activityEvents CaseActivityEvent[]
+  intakeFields   IntakeField[]
 
   @@map("organizations")
+}
+
+model IntakeField {
+  id               String          @id @default(uuid())
+  organizationId   String
+  key              String
+  label            String
+  fieldType        IntakeFieldType
+  placeholder      String?
+  helpText         String?
+  options          Json?
+  isRequired       Boolean         @default(false)
+  showOnCaseDetail Boolean         @default(true)
+  isActive         Boolean         @default(true)
+  sortOrder        Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, key])
+  @@index([organizationId])
+  @@index([sortOrder])
+  @@map("intake_fields")
 }
 
 model User {
@@ -55,7 +97,7 @@ model User {
   organizationId String
   name           String
   email          String   @unique
-  passwordHash   String
+  passwordHash   String?
   role           Role
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
