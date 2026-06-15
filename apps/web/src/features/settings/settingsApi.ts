@@ -1,4 +1,5 @@
 import { api } from "../../lib/api";
+import type { AuthUser } from "../auth/auth";
 
 export type WorkflowStatusSetting = {
   id: string;
@@ -82,6 +83,16 @@ export type IndustryTemplate = {
   customerLabel: string;
   defaultStatuses: string[];
   defaultCategories: string[];
+  defaultIntakeFields: {
+    key: string;
+    label: string;
+    fieldType: IntakeFieldType;
+    placeholder?: string;
+    helpText?: string;
+    options?: string[];
+    isRequired: boolean;
+    showOnCaseDetail: boolean;
+  }[];
 };
 
 export type WorkspaceProfile = {
@@ -93,6 +104,17 @@ export type WorkspaceProfile = {
   caseLabel: string | null;
   customerLabel: string | null;
   industryTemplateKey: string | null;
+};
+
+export type DemoOrganization = {
+  id: string;
+  name: string;
+  slug: string;
+  appName: string | null;
+  caseLabel: string | null;
+  customerLabel: string | null;
+  industryTemplateKey: string | null;
+  demoUser: AuthUser;
 };
 
 export type UpdateWorkspaceProfileInput = {
@@ -189,6 +211,10 @@ type WorkspaceProfileResponse = {
   data: WorkspaceProfile;
 };
 
+type DemoOrganizationsResponse = {
+  data: DemoOrganization[];
+};
+
 type IntakeFieldsResponse = {
   data: IntakeFieldSetting[];
 };
@@ -278,6 +304,14 @@ export async function fetchIndustryTemplates() {
 export async function fetchWorkspaceProfile() {
   const response = await api.get<WorkspaceProfileResponse>(
     "/api/settings/workspace",
+  );
+
+  return response.data.data;
+}
+
+export async function fetchDemoOrganizations() {
+  const response = await api.get<DemoOrganizationsResponse>(
+    "/api/settings/demo-organizations",
   );
 
   return response.data.data;
