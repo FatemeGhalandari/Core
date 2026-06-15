@@ -2,48 +2,35 @@
 
 Core is a reusable full-stack SaaS workflow and case management platform.
 
-It is built around one central business object: a **Case**. A case can represent a request, lead, application, booking, claim, support issue, appointment request, transaction review, or any other unit of operational work.
+The product is built around one central object: a **Case**. A case can represent an appointment request, property inquiry, finance application, insurance claim, sales deal, local service booking, support issue, or any other unit of operational work.
 
-The current demo workspace uses MapleCare Clinic seed data, but the product itself is intentionally generic. Core is designed as a reusable workflow engine that can be adapted across industries through configurable labels, statuses, categories, intake fields, assignments, permissions, and reports.
+Core is intentionally generic. Industry demos change labels, statuses, categories, intake fields, and seed data, but they all run on the same workflow engine.
 
-## Product Concept
+## What It Demonstrates
 
-Most businesses have the same operational shape:
+- Multi-vertical workflow configuration without cloning the app
+- Case inbox with search, filters, assignment, priority, status, and category
+- Case detail with customer context, comments, activity events, and intake data
+- Customer records linked to all related cases
+- Settings for workspace labels, templates, statuses, categories, intake fields, and team visibility
+- Operations reports for volume, priority, ownership, aging, and closed work
+- Local demo mode for switching between seeded vertical workspaces
+- Deployment-ready API/web configuration with hosted PostgreSQL support
 
-- A customer submits or creates work.
-- A team triages that work.
-- The work moves through statuses.
-- Someone owns the next step.
-- The organization needs visibility into volume, bottlenecks, and outcomes.
+## Demo Workspaces
 
-Core turns that pattern into a reusable product foundation. Instead of building a separate app for every vertical, Core provides the shared workflow infrastructure and lets each workspace configure the language and structure around it.
+The seed creates six demo organizations:
 
-Examples:
+| Workspace | Template | App Name | Case Label | Customer Label |
+| --- | --- | --- | --- | --- |
+| MapleCare Clinic | Clinic | Core Clinic | Request | Patient |
+| Summit Realty | Real Estate | Core Realty | Inquiry | Client |
+| Northstar Finance | Finance | Core Finance | Application | Customer |
+| Harbor Insurance | Insurance | Core Insurance | Claim | Policyholder |
+| Pipeline Sales | Sales | Core Sales | Deal | Lead |
+| LocalPro Services | Local Business | Core Local | Booking | Customer |
 
-- Clinic: Case = appointment request or patient intake
-- Realty: Case = buyer lead, seller lead, or viewing request
-- Finance: Case = application, dispute, or transaction review
-- Insurance: Case = claim or quote request
-- Sales: Case = lead or deal
-- Local Business: Case = booking or service request
-
-## Main Features
-
-- Operations inbox for searching, filtering, and prioritizing cases
-- Case detail pages with workflow status, assignee, customer, comments, activity, and intake data
-- Customer records linked to related cases
-- Configurable workflow statuses
-- Configurable case categories
-- Configurable intake fields
-- Required intake field validation
-- Workspace profile settings for app name, case label, customer label, and template key
-- Read-only workspace template previews
-- Team member visibility with open assigned case counts
-- Role-aware frontend navigation and access screens
-- Basic demo login flow
-- Backend role middleware for protected write actions
-- Operations reports powered by backend report data
-- Realistic seeded demo workspace with users, customers, cases, comments, activity, assignments, priorities, and intake data
+Each workspace includes users, workflow statuses, categories, intake fields, customers, cases, comments, and activity events.
 
 ## Tech Stack
 
@@ -74,41 +61,47 @@ Tooling:
 
 ## Screenshots
 
-Add screenshots here before sharing the project publicly.
+### Portfolio Landing
+
+![Core portfolio landing page](docs/screenshots/portfolio.png)
 
 ### Login
 
-<!-- Screenshot placeholder: /screenshots/login.png -->
+![Core login page](docs/screenshots/login.png)
+
+### Dashboard
+
+![Core dashboard](docs/screenshots/dashboard.png)
 
 ### Case Inbox
 
-<!-- Screenshot placeholder: /screenshots/case-inbox.png -->
+![Core case inbox](docs/screenshots/case-inbox.png)
 
 ### Case Detail
 
-<!-- Screenshot placeholder: /screenshots/case-detail.png -->
+![Core case detail](docs/screenshots/case-detail.png)
 
 ### Customers
 
-<!-- Screenshot placeholder: /screenshots/customers.png -->
+![Core customer records](docs/screenshots/customers.png)
 
 ### Reports
 
-<!-- Screenshot placeholder: /screenshots/reports.png -->
+![Core reports](docs/screenshots/reports.png)
 
 ### Settings
 
-<!-- Screenshot placeholder: /screenshots/settings.png -->
+![Core settings](docs/screenshots/settings.png)
 
 ## Demo Login
 
-All seeded demo users use the same password:
+All seeded demo users use:
 
 ```txt
 Password123!
 ```
 
-Available demo accounts:
+MapleCare logins kept for the primary demo:
 
 ```txt
 owner@maplecare.test
@@ -118,42 +111,72 @@ nurse@maplecare.test
 coordinator@maplecare.test
 ```
 
-The owner and admin users can manage settings. Staff users can work cases. Viewer-style access is represented in the permission model, but the current seed focuses on owner/admin/staff demo users.
+Other workspace owner logins:
+
+```txt
+owner@summit-realty.test
+owner@northstar-finance.test
+owner@harbor-insurance.test
+owner@pipeline-sales.test
+owner@localpro-services.test
+```
+
+Owners and admins can manage settings. Staff users can work cases and view reports.
 
 ## Local Setup
 
-### 1. Install dependencies
+### 1. Install Dependencies
 
 ```powershell
 npm install
 ```
 
-### 2. Start PostgreSQL
+### 2. Configure Environment
+
+Create `apps/api/.env`:
+
+```txt
+NODE_ENV=development
+PORT=4000
+CLIENT_URL=http://localhost:5173
+DATABASE_URL=postgresql://core:core_password@localhost:5432/core_db
+```
+
+Create `apps/web/.env`:
+
+```txt
+VITE_API_URL=http://localhost:4000
+```
+
+Example files are committed at:
+
+```txt
+apps/api/.env.example
+apps/web/.env.example
+```
+
+### 3. Start PostgreSQL
 
 ```powershell
 npm run db:up
 ```
 
-The local database is configured through Docker Compose:
+The local Docker database URL is:
 
 ```txt
 postgresql://core:core_password@localhost:5432/core_db
 ```
 
-Create `apps/api/.env` if needed:
-
-```txt
-DATABASE_URL=postgresql://core:core_password@localhost:5432/core_db
-```
-
-### 3. Prepare the database
+### 4. Prepare Database
 
 ```powershell
 npm run db:migrate -w apps/api
 npm run db:seed -w apps/api
 ```
 
-### 4. Run the app
+The seed is safe to rerun. It cleans and rebuilds each seeded demo organization.
+
+### 5. Run The App
 
 ```powershell
 npm run dev
@@ -166,42 +189,42 @@ Frontend: http://localhost:5173
 Backend:  http://localhost:4000
 ```
 
-### 5. Build
+## Useful Scripts
 
 ```powershell
+npm run dev
 npm run build
-```
-
-You can also build each app separately:
-
-```powershell
 npm run build:api
 npm run build:web
+npm run db:up
+npm run db:down
+npm run db:deploy
+npm run db:seed -w apps/api
 ```
 
-## Main Demo Routes
+## Main Routes
+
+Portfolio:
+
+```txt
+/portfolio
+/demo/clinic
+/demo/realty
+/demo/finance
+```
+
+Product:
 
 ```txt
 /login
 /
+/cases
+/cases/:caseId
 /customers
+/customers/:customerId
 /reports
 /settings
-/cases/:caseId
 ```
-
-## Future Industry Templates
-
-Core is being designed to support reusable workspace templates. Templates can configure labels, default statuses, categories, intake fields, dashboard emphasis, and seed/demo examples while preserving the same core workflow engine.
-
-Planned template directions:
-
-- **Core Clinic**: patient intake, appointment requests, follow-up workflows
-- **Core Realty**: property inquiries, buyer leads, seller leads, viewing requests
-- **Core Finance**: applications, disputes, transaction reviews
-- **Core Insurance**: claims, quotes, policy service requests
-- **Core Sales**: leads, deals, renewals, handoffs
-- **Core Local Business**: bookings, service requests, customer follow-ups
 
 ## Project Structure
 
@@ -209,13 +232,26 @@ Planned template directions:
 Core/
   apps/
     api/
+      prisma/
+      src/
     web/
+      src/
   packages/
-    shared/
   docker-compose.yml
   package.json
 ```
 
-## Notes
+## Deployment
 
-Core currently uses a simple demo authentication flow and a demo organization lookup while the workflow foundation is being built. The long-term direction is to add stronger tenant-aware auth, production permissions, and template application workflows after the reusable case engine is stable.
+Deployment setup is documented in [DEPLOYMENT.md](./DEPLOYMENT.md).
+
+Production configuration is environment-driven:
+
+- API: `DATABASE_URL`, `CLIENT_URLS`, `PORT`, `NODE_ENV`
+- Web: `VITE_API_URL`
+
+Use `npm run db:deploy` for production migrations against hosted PostgreSQL.
+
+## Product Direction
+
+Core is a portfolio-ready foundation for vertical SaaS workflow products. The current implementation keeps the core platform reusable while showing how the same case engine can support clinic, realty, finance, insurance, sales, and local service workflows through configuration and seed data.
