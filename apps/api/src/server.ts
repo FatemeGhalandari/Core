@@ -14,11 +14,32 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT ?? 4000;
-const CLIENT_URL = process.env.CLIENT_URL ?? "http://localhost:5173";
+
+function getClientOrigins() {
+  const configuredOrigins = process.env.CLIENT_URLS ?? process.env.CLIENT_URL;
+
+  if (!configuredOrigins && process.env.NODE_ENV === "production") {
+    throw new Error("CLIENT_URLS or CLIENT_URL must be set in production.");
+  }
+
+  return (configuredOrigins ?? "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+const CLIENT_ORIGINS = getClientOrigins();
 
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin(origin, callback) {
+      if (!origin || CLIENT_ORIGINS.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origin ${origin} is not allowed by CORS.`));
+    },
     credentials: true,
   }),
 );
@@ -81,5 +102,5 @@ app.use(
 );
 
 app.listen(PORT, () => {
-  console.log(`API running on http://localhost:${PORT}`);
+  console.log(`API listening on port ${PORT}`);
 });
