@@ -17,12 +17,42 @@ import { RequirePermission } from "./features/auth/RequirePermission";
 import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { ReportsPage } from "./features/reports/ReportsPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
+import {
+  CoreLandingPage,
+  VerticalDemoPage,
+} from "./features/portfolio/PortfolioPages";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/portfolio" element={<CoreLandingPage />} />
+          <Route path="/core" element={<CoreLandingPage />} />
+          <Route
+            path="/portfolio/clinic"
+            element={<VerticalDemoPage demoKey="clinic" />}
+          />
+          <Route
+            path="/portfolio/realty"
+            element={<VerticalDemoPage demoKey="realty" />}
+          />
+          <Route
+            path="/portfolio/finance"
+            element={<VerticalDemoPage demoKey="finance" />}
+          />
+          <Route
+            path="/demo/clinic"
+            element={<VerticalDemoPage demoKey="clinic" />}
+          />
+          <Route
+            path="/demo/realty"
+            element={<VerticalDemoPage demoKey="realty" />}
+          />
+          <Route
+            path="/demo/finance"
+            element={<VerticalDemoPage demoKey="finance" />}
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/"
