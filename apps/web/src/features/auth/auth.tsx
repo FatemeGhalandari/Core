@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
+import { AUTH_STORAGE_KEY } from "../../lib/api";
 
-export type AppRole = "owner" | "admin" | "staff" | "viewer";
+export type AppRole = "owner" | "admin" | "staff";
 
 export type AuthUser = {
   id: string;
@@ -15,8 +16,6 @@ type AuthContextValue = {
   login: (user: AuthUser) => void;
   logout: () => void;
 };
-
-const AUTH_STORAGE_KEY = "core.auth.user";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -74,10 +73,5 @@ export function canWorkCases(role: AppRole) {
 }
 
 export function canViewReports(role: AppRole) {
-  return (
-    role === "owner" ||
-    role === "admin" ||
-    role === "staff" ||
-    role === "viewer"
-  );
+  return role === "owner" || role === "admin" || role === "staff";
 }
