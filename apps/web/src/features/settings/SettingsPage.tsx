@@ -2,16 +2,22 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../../components/AppShell";
+import {
+  getDemoOrganizationSlug,
+  setDemoOrganizationSlug,
+} from "../../lib/api";
 import { ErrorState, LoadingState } from "../../components/StateCards";
 import { fetchCases, type CaseListFilters } from "../cases/caseApi";
 import { formatFieldLabel } from "../cases/caseUtils";
 import { fetchCustomers } from "../customers/customerApi";
+import { useAuth } from "../auth/auth";
 import { pluralizeLabel } from "../workspace/workspaceLabels";
 import {
   createCaseCategory,
   createIntakeField,
   createWorkflowStatus,
   fetchCaseCategories,
+  fetchDemoOrganizations,
   fetchIndustryTemplates,
   fetchIntakeFields,
   fetchTeamMembers,
@@ -29,8 +35,12 @@ import {
   type IntakeFieldType,
   type WorkflowStatusEditForm,
   type WorkflowStatusSetting,
+  type WorkspaceProfile,
   type WorkspaceProfileForm,
 } from "./settingsApi";
+
+import { ApplyWorkspaceTemplateButton } from "./ApplyWorkspaceTemplateButton";
+
 const INTAKE_FIELD_TYPE_OPTIONS: { label: string; value: IntakeFieldType }[] = [
   { label: "Text", value: "text" },
   { label: "Long text", value: "textarea" },
@@ -54,8 +64,12 @@ const DASHBOARD_CASE_FILTERS: CaseListFilters = {
 
 export function SettingsPage() {
   const queryClient = useQueryClient();
+  const { login } = useAuth();
   const [activeSettingsSection, setActiveSettingsSection] =
     useState("workspace");
+  const [selectedDemoSlug, setSelectedDemoSlug] = useState(() =>
+    getDemoOrganizationSlug(),
+  );
   const [newStatusName, setNewStatusName] = useState("");
   const [newStatusColor, setNewStatusColor] = useState("#4f46e5");
   const [newStatusIsDefault, setNewStatusIsDefault] = useState(false);
@@ -153,6 +167,13 @@ export function SettingsPage() {
     queryFn: fetchWorkspaceProfile,
   });
 
+  const { data: demoOrganizations = [], isLoading: isLoadingDemoOrganizations } =
+    useQuery({
+      queryKey: ["settings", "demo-organizations"],
+      queryFn: fetchDemoOrganizations,
+      retry: false,
+    });
+
   const {
     data: intakeFields = [],
     isLoading: isLoadingIntakeFields,
@@ -171,6 +192,7 @@ export function SettingsPage() {
     isLoadingTeamMembers ||
     isLoadingIndustryTemplates ||
     isLoadingWorkspaceProfile ||
+    isLoadingDemoOrganizations ||
     isLoadingIntakeFields;
   const isError =
     isCasesError ||
@@ -203,6 +225,14 @@ export function SettingsPage() {
       industryTemplateKey: workspaceProfile.industryTemplateKey ?? "",
     });
   }, [workspaceProfile]);
+
+  useEffect(() => {
+    if (selectedDemoSlug || !workspaceProfile?.slug) {
+      return;
+    }
+
+    setSelectedDemoSlug(workspaceProfile.slug);
+  }, [selectedDemoSlug, workspaceProfile?.slug]);
 
   const openCases = cases.filter((caseItem) => !caseItem.status.isClosed);
   const unassignedCases = cases.filter((caseItem) => !caseItem.assignedUser);
@@ -443,6 +473,38 @@ export function SettingsPage() {
     }));
   }
 
+  function handleDemoOrganizationChange(
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) {
+    const nextSlug = event.target.value;
+    const selectedOrganization = demoOrganizations.find(
+      (organization) => organization.slug === nextSlug,
+    );
+
+    if (!selectedOrganization) {
+      return;
+    }
+
+    setSelectedDemoSlug(nextSlug);
+    setDemoOrganizationSlug(nextSlug);
+    login(selectedOrganization.demoUser);
+    queryClient.setQueryData<WorkspaceProfile>(["settings", "workspace"], {
+      id: selectedOrganization.id,
+      name: selectedOrganization.name,
+      slug: selectedOrganization.slug,
+      industry: selectedOrganization.industryTemplateKey ?? "core",
+      appName: selectedOrganization.appName,
+      caseLabel: selectedOrganization.caseLabel,
+      customerLabel: selectedOrganization.customerLabel,
+      industryTemplateKey: selectedOrganization.industryTemplateKey,
+    });
+    queryClient.invalidateQueries({
+      predicate: (query) =>
+        query.queryKey[0] !== "settings" ||
+        query.queryKey[1] !== "demo-organizations",
+    });
+  }
+
   function handleCreateIntakeField(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -523,6 +585,10 @@ export function SettingsPage() {
     industryTemplates.find(
       (template) => template.key === workspaceProfile?.industryTemplateKey,
     )?.name ?? formatFieldLabel(workspaceProfile?.industry ?? "general");
+  const selectedIndustryTemplate = industryTemplates.find(
+    (template) => template.key === workspaceProfileForm.industryTemplateKey,
+  );
+  const webOrigin = window.location.origin;
 
   return (
     <AppShell>
@@ -710,6 +776,57 @@ export function SettingsPage() {
 
           {activeSettingsSection === "workspace" && (
             <>
+              <div className="settings-panel demo-mode-panel">
+                <div className="settings-panel-header">
+                  <div>
+                    <h2>Demo Mode</h2>
+                    <p>
+                      Switch the local demo workspace without cloning the app.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="demo-mode-selector">
+                  <label>
+                    Active demo
+                    <select
+                      disabled={demoOrganizations.length === 0}
+                      value={selectedDemoSlug}
+                      onChange={handleDemoOrganizationChange}
+                    >
+                      {demoOrganizations.length === 0 ? (
+                        <option value="">No demos seeded</option>
+                      ) : (
+                        demoOrganizations.map((organization) => (
+                          <option
+                            key={organization.id}
+                            value={organization.slug}
+                          >
+                            {organization.name}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </label>
+
+                  <div>
+                    <span>Showing</span>
+                    <strong>{workspaceAppName}</strong>
+                    <p>
+                      {workspaceCaseLabel} workflow / {workspaceCustomerLabel}{" "}
+                      records
+                    </p>
+                  </div>
+                </div>
+
+                {demoOrganizations.length === 0 && (
+                  <div className="settings-muted-note">
+                    No seeded demo workspaces were found.
+                  </div>
+                )}
+
+              </div>
+
               <div className="settings-panel">
                 <form onSubmit={handleUpdateWorkspaceProfile}>
                   <div className="settings-panel-header">
@@ -801,6 +918,15 @@ export function SettingsPage() {
                       </select>
                     </label>
 
+                    <div className="settings-inline-action">
+                      <ApplyWorkspaceTemplateButton
+                        industryTemplateKey={
+                          workspaceProfileForm.industryTemplateKey
+                        }
+                        templateName={selectedIndustryTemplate?.name}
+                      />
+                    </div>
+
                     <label>
                       Default status
                       <select defaultValue="new" disabled>
@@ -819,6 +945,91 @@ export function SettingsPage() {
                     </div>
                   )}
                 </form>
+
+                {selectedIndustryTemplate && (
+                  <div className="template-preview">
+                    <div className="template-preview-header">
+                      <div>
+                        <span>Template preview</span>
+                        <strong>{selectedIndustryTemplate.name}</strong>
+                      </div>
+                      <small>Preview only</small>
+                    </div>
+
+                    <div className="template-preview-labels">
+                      <div>
+                        <span>App</span>
+                        <strong>{selectedIndustryTemplate.appName}</strong>
+                      </div>
+                      <div>
+                        <span>Case label</span>
+                        <strong>{selectedIndustryTemplate.caseLabel}</strong>
+                      </div>
+                      <div>
+                        <span>Customer label</span>
+                        <strong>{selectedIndustryTemplate.customerLabel}</strong>
+                      </div>
+                    </div>
+
+                    <div className="template-preview-grid">
+                      <div className="template-preview-section">
+                        <h3>Statuses</h3>
+                        <div className="template-chip-list">
+                          {selectedIndustryTemplate.defaultStatuses.map(
+                            (status) => (
+                              <small key={status}>{status}</small>
+                            ),
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="template-preview-section">
+                        <h3>Categories</h3>
+                        <div className="template-chip-list">
+                          {selectedIndustryTemplate.defaultCategories.map(
+                            (category) => (
+                              <small key={category}>{category}</small>
+                            ),
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="template-preview-section full-span">
+                        <h3>Intake fields</h3>
+                        <div className="template-intake-preview-list">
+                          {selectedIndustryTemplate.defaultIntakeFields.map(
+                            (field) => (
+                              <div
+                                className="template-intake-preview-item"
+                                key={field.key}
+                              >
+                                <div>
+                                  <strong>{field.label}</strong>
+                                  <span>
+                                    {formatFieldLabel(field.fieldType)}
+                                    {field.isRequired ? " / Required" : ""}
+                                  </span>
+                                </div>
+
+                                {field.placeholder && (
+                                  <small>{field.placeholder}</small>
+                                )}
+
+                                {field.options && field.options.length > 0 && (
+                                  <div className="template-chip-list">
+                                    {field.options.map((option) => (
+                                      <small key={option}>{option}</small>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="settings-panel">
@@ -1700,12 +1911,16 @@ export function SettingsPage() {
 
                   <label>
                     API environment
-                    <input defaultValue="Local development" />
+                    <input
+                      defaultValue={
+                        import.meta.env.PROD ? "Production" : "Local development"
+                      }
+                    />
                   </label>
 
                   <label>
                     Web origin
-                    <input defaultValue="http://localhost:5173" />
+                    <input defaultValue={webOrigin} />
                   </label>
                 </div>
               </div>
@@ -1716,4 +1931,3 @@ export function SettingsPage() {
     </AppShell>
   );
 }
-
