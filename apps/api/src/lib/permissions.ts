@@ -1,4 +1,4 @@
-export type AppRole = "owner" | "admin" | "staff" | "viewer";
+export type AppRole = "owner" | "admin" | "staff";
 
 export function canManageSettings(role: AppRole) {
   return role === "owner" || role === "admin";
