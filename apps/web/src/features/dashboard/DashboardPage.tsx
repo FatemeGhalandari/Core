@@ -240,7 +240,7 @@ export function DashboardPage() {
                   <div>
                     <strong>{caseItem.title}</strong>
                     <span>
-                      {caseItem.customer.name} · {caseItem.status.name}
+                      {caseItem.customer.name} / {caseItem.status.name}
                     </span>
                   </div>
 
