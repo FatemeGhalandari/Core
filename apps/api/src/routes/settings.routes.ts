@@ -1,9 +1,5 @@
 import { Router } from "express";
 import { z } from "zod";
-import {
-  DEMO_ORGANIZATION_SLUG,
-  getDemoOrganizationId,
-} from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
 import { slugify } from "../lib/slug.js";
 import {
@@ -11,78 +7,15 @@ import {
   requireRole,
   requireUser,
 } from "../middleware/auth.js";
+import { industryTemplates } from "../lib/industry-templates.js";
+import { applyIndustryTemplateToWorkspace } from "../lib/apply-industry-template.js";
 
 export const settingsRouter = Router();
 
 settingsRouter.use(attachCurrentUser);
+settingsRouter.use(requireUser);
 
-const requireSettingsManager = [requireUser, requireRole("owner", "admin")];
-
-const industryTemplates = [
-  {
-    key: "general",
-    name: "General Operations",
-    appName: "Core",
-    caseLabel: "Case",
-    customerLabel: "Customer",
-    defaultStatuses: ["New", "In Progress", "Waiting on Customer", "Closed"],
-    defaultCategories: ["General", "Review", "Follow-up"],
-  },
-  {
-    key: "clinic",
-    name: "Clinic",
-    appName: "Core Clinic",
-    caseLabel: "Request",
-    customerLabel: "Patient",
-    defaultStatuses: ["New", "Triage", "Scheduled", "Waiting on Patient", "Closed"],
-    defaultCategories: ["Intake", "Appointment", "Billing", "Records"],
-  },
-  {
-    key: "real_estate",
-    name: "Real Estate",
-    appName: "Core Realty",
-    caseLabel: "Inquiry",
-    customerLabel: "Client",
-    defaultStatuses: ["New Lead", "Qualified", "Viewing Scheduled", "Offer", "Closed"],
-    defaultCategories: ["Buyer Lead", "Seller Lead", "Viewing", "Property Inquiry"],
-  },
-  {
-    key: "finance",
-    name: "Finance",
-    appName: "Core Finance",
-    caseLabel: "Application",
-    customerLabel: "Customer",
-    defaultStatuses: ["Submitted", "Under Review", "Needs Information", "Approved", "Closed"],
-    defaultCategories: ["Application", "Dispute", "Transaction Review", "Document Request"],
-  },
-  {
-    key: "insurance",
-    name: "Insurance",
-    appName: "Core Insurance",
-    caseLabel: "Claim",
-    customerLabel: "Policyholder",
-    defaultStatuses: ["Filed", "Assessing", "Waiting on Documents", "Decision", "Closed"],
-    defaultCategories: ["Claim", "Quote", "Policy Change", "Document Review"],
-  },
-  {
-    key: "sales",
-    name: "Sales",
-    appName: "Core Sales",
-    caseLabel: "Deal",
-    customerLabel: "Lead",
-    defaultStatuses: ["New Lead", "Contacted", "Qualified", "Proposal", "Closed"],
-    defaultCategories: ["Inbound Lead", "Outbound Lead", "Renewal", "Expansion"],
-  },
-  {
-    key: "local_business",
-    name: "Local Business",
-    appName: "Core Local",
-    caseLabel: "Booking",
-    customerLabel: "Customer",
-    defaultStatuses: ["Requested", "Confirmed", "In Progress", "Waiting on Customer", "Closed"],
-    defaultCategories: ["Booking", "Service Request", "Quote", "Follow-up"],
-  },
-];
+const requireSettingsManager = [requireRole("owner", "admin")];
 
 const createWorkflowStatusSchema = z.object({
   name: z.string().trim().min(2),
@@ -176,17 +109,23 @@ const updateIntakeFieldSchema = z
     message: "At least one field is required.",
   });
 
+const applyWorkspaceTemplateSchema = z
+  .object({
+    industryTemplateKey: z.string().trim().min(1),
+  })
+  .strict();
+
 settingsRouter.get("/industry-templates", (_req, res) => {
   res.status(200).json({
     data: industryTemplates,
   });
 });
 
-settingsRouter.get("/workspace", async (_req, res, next) => {
+settingsRouter.get("/workspace", async (req, res, next) => {
   try {
     const workspace = await prisma.organization.findUnique({
       where: {
-        slug: DEMO_ORGANIZATION_SLUG,
+        id: req.currentUser!.organizationId,
       },
       select: {
         id: true,
@@ -215,67 +154,177 @@ settingsRouter.get("/workspace", async (_req, res, next) => {
   }
 });
 
-settingsRouter.patch("/workspace", ...requireSettingsManager, async (req, res, next) => {
+settingsRouter.get("/demo-organizations", async (_req, res, next) => {
   try {
-    const parsed = updateWorkspaceSchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const existingWorkspace = await prisma.organization.findUnique({
-      where: {
-        slug: DEMO_ORGANIZATION_SLUG,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!existingWorkspace) {
+    if (process.env.NODE_ENV === "production") {
       res.status(404).json({
-        message: "Workspace not found.",
+        message: "Demo mode is only available in local development.",
       });
       return;
     }
 
-    const updatedWorkspace = await prisma.organization.update({
-      where: {
-        id: existingWorkspace.id,
-      },
-      data: {
-        appName: parsed.data.appName,
-        caseLabel: parsed.data.caseLabel,
-        customerLabel: parsed.data.customerLabel,
-        industryTemplateKey: parsed.data.industryTemplateKey,
+    const organizations = await prisma.organization.findMany({
+      orderBy: {
+        name: "asc",
       },
       select: {
         id: true,
         name: true,
         slug: true,
-        industry: true,
         appName: true,
         caseLabel: true,
         customerLabel: true,
         industryTemplateKey: true,
+        users: {
+          where: {
+            role: {
+              in: ["owner", "admin"],
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+          take: 1,
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            organizationId: true,
+          },
+        },
       },
     });
 
     res.status(200).json({
-      data: updatedWorkspace,
+      data: organizations
+        .filter((organization) => organization.users[0])
+        .map((organization) => ({
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+          appName: organization.appName,
+          caseLabel: organization.caseLabel,
+          customerLabel: organization.customerLabel,
+          industryTemplateKey: organization.industryTemplateKey,
+          demoUser: organization.users[0],
+        })),
     });
   } catch (error) {
     next(error);
   }
 });
 
-settingsRouter.get("/intake-fields", async (_req, res, next) => {
+settingsRouter.patch(
+  "/workspace",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = updateWorkspaceSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const existingWorkspace = await prisma.organization.findUnique({
+        where: {
+          id: req.currentUser!.organizationId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!existingWorkspace) {
+        res.status(404).json({
+          message: "Workspace not found.",
+        });
+        return;
+      }
+
+      const updatedWorkspace = await prisma.organization.update({
+        where: {
+          id: existingWorkspace.id,
+        },
+        data: {
+          appName: parsed.data.appName,
+          caseLabel: parsed.data.caseLabel,
+          customerLabel: parsed.data.customerLabel,
+          industryTemplateKey: parsed.data.industryTemplateKey,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          industry: true,
+          appName: true,
+          caseLabel: true,
+          customerLabel: true,
+          industryTemplateKey: true,
+        },
+      });
+
+      res.status(200).json({
+        data: updatedWorkspace,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+settingsRouter.post(
+  "/workspace/apply-template",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = applyWorkspaceTemplateSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const organizationId = req.currentUser?.organizationId;
+
+      if (!organizationId) {
+        res.status(401).json({
+          message: "Authentication required.",
+        });
+        return;
+      }
+
+      const updatedWorkspace = await applyIndustryTemplateToWorkspace({
+        organizationId,
+        industryTemplateKey: parsed.data.industryTemplateKey,
+      });
+
+      if (!updatedWorkspace) {
+        res.status(404).json({
+          message: "Industry template not found.",
+        });
+        return;
+      }
+
+      res.status(200).json({
+        data: updatedWorkspace,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+settingsRouter.get("/intake-fields", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const intakeFields = await prisma.intakeField.findMany({
       where: {
@@ -314,131 +363,23 @@ settingsRouter.get("/intake-fields", async (_req, res, next) => {
   }
 });
 
-settingsRouter.post("/intake-fields", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = createIntakeFieldSchema.safeParse(req.body);
+settingsRouter.post(
+  "/intake-fields",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = createIntakeFieldSchema.safeParse(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
 
-    const organizationId = await getDemoOrganizationId();
-    const key = slugify(parsed.data.label);
-
-    if (!key) {
-      res.status(400).json({
-        message: "Field label must include letters or numbers.",
-      });
-      return;
-    }
-
-    const existingIntakeField = await prisma.intakeField.findFirst({
-      where: {
-        organizationId,
-        key,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (existingIntakeField) {
-      res.status(409).json({
-        message: "An intake field with this key already exists.",
-      });
-      return;
-    }
-
-    const maxSortOrderIntakeField = await prisma.intakeField.findFirst({
-      where: {
-        organizationId,
-      },
-      orderBy: {
-        sortOrder: "desc",
-      },
-      select: {
-        sortOrder: true,
-      },
-    });
-
-    const nextSortOrder = (maxSortOrderIntakeField?.sortOrder ?? 0) + 1;
-
-    const createdIntakeField = await prisma.intakeField.create({
-      data: {
-        organizationId,
-        key,
-        label: parsed.data.label,
-        fieldType: parsed.data.fieldType,
-        isRequired: parsed.data.isRequired,
-        showOnCaseDetail: parsed.data.showOnCaseDetail,
-        isActive: parsed.data.isActive,
-        sortOrder: nextSortOrder,
-      },
-      select: {
-        id: true,
-        key: true,
-        label: true,
-        fieldType: true,
-        placeholder: true,
-        helpText: true,
-        options: true,
-        isRequired: true,
-        showOnCaseDetail: true,
-        isActive: true,
-        sortOrder: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    res.status(201).json({
-      data: createdIntakeField,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-settingsRouter.patch("/intake-fields/:id", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = updateIntakeFieldSchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const organizationId = await getDemoOrganizationId();
-    const id = String(req.params.id);
-
-    const currentIntakeField = await prisma.intakeField.findFirst({
-      where: {
-        id,
-        organizationId,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!currentIntakeField) {
-      res.status(404).json({
-        message: "Intake field not found.",
-      });
-      return;
-    }
-
-    let key: string | undefined;
-
-    if (parsed.data.label) {
-      key = slugify(parsed.data.label);
+      const organizationId = req.currentUser!.organizationId;
+      const key = slugify(parsed.data.label);
 
       if (!key) {
         res.status(400).json({
@@ -447,77 +388,193 @@ settingsRouter.patch("/intake-fields/:id", ...requireSettingsManager, async (req
         return;
       }
 
-      const duplicateIntakeField = await prisma.intakeField.findFirst({
+      const existingIntakeField = await prisma.intakeField.findFirst({
         where: {
           organizationId,
           key,
-          NOT: {
-            id,
-          },
         },
         select: {
           id: true,
         },
       });
 
-      if (duplicateIntakeField) {
+      if (existingIntakeField) {
         res.status(409).json({
           message: "An intake field with this key already exists.",
         });
         return;
       }
+
+      const maxSortOrderIntakeField = await prisma.intakeField.findFirst({
+        where: {
+          organizationId,
+        },
+        orderBy: {
+          sortOrder: "desc",
+        },
+        select: {
+          sortOrder: true,
+        },
+      });
+
+      const nextSortOrder = (maxSortOrderIntakeField?.sortOrder ?? 0) + 1;
+
+      const createdIntakeField = await prisma.intakeField.create({
+        data: {
+          organizationId,
+          key,
+          label: parsed.data.label,
+          fieldType: parsed.data.fieldType,
+          isRequired: parsed.data.isRequired,
+          showOnCaseDetail: parsed.data.showOnCaseDetail,
+          isActive: parsed.data.isActive,
+          sortOrder: nextSortOrder,
+        },
+        select: {
+          id: true,
+          key: true,
+          label: true,
+          fieldType: true,
+          placeholder: true,
+          helpText: true,
+          options: true,
+          isRequired: true,
+          showOnCaseDetail: true,
+          isActive: true,
+          sortOrder: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      res.status(201).json({
+        data: createdIntakeField,
+      });
+    } catch (error) {
+      next(error);
     }
+  },
+);
 
-    const updateData = {
-      ...(parsed.data.label ? { label: parsed.data.label, key } : {}),
-      ...(parsed.data.fieldType ? { fieldType: parsed.data.fieldType } : {}),
-      ...(parsed.data.isRequired !== undefined
-        ? { isRequired: parsed.data.isRequired }
-        : {}),
-      ...(parsed.data.showOnCaseDetail !== undefined
-        ? { showOnCaseDetail: parsed.data.showOnCaseDetail }
-        : {}),
-      ...(parsed.data.sortOrder !== undefined
-        ? { sortOrder: parsed.data.sortOrder }
-        : {}),
-      ...(parsed.data.isActive !== undefined
-        ? { isActive: parsed.data.isActive }
-        : {}),
-    };
+settingsRouter.patch(
+  "/intake-fields/:id",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = updateIntakeFieldSchema.safeParse(req.body);
 
-    const updatedIntakeField = await prisma.intakeField.update({
-      where: {
-        id: currentIntakeField.id,
-      },
-      data: updateData,
-      select: {
-        id: true,
-        key: true,
-        label: true,
-        fieldType: true,
-        placeholder: true,
-        helpText: true,
-        options: true,
-        isRequired: true,
-        showOnCaseDetail: true,
-        isActive: true,
-        sortOrder: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
 
-    res.status(200).json({
-      data: updatedIntakeField,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      const organizationId = req.currentUser!.organizationId;
+      const id = String(req.params.id);
 
-settingsRouter.get("/workflow-statuses", async (_req, res, next) => {
+      const currentIntakeField = await prisma.intakeField.findFirst({
+        where: {
+          id,
+          organizationId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!currentIntakeField) {
+        res.status(404).json({
+          message: "Intake field not found.",
+        });
+        return;
+      }
+
+      let key: string | undefined;
+
+      if (parsed.data.label) {
+        key = slugify(parsed.data.label);
+
+        if (!key) {
+          res.status(400).json({
+            message: "Field label must include letters or numbers.",
+          });
+          return;
+        }
+
+        const duplicateIntakeField = await prisma.intakeField.findFirst({
+          where: {
+            organizationId,
+            key,
+            NOT: {
+              id,
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        if (duplicateIntakeField) {
+          res.status(409).json({
+            message: "An intake field with this key already exists.",
+          });
+          return;
+        }
+      }
+
+      const updateData = {
+        ...(parsed.data.label ? { label: parsed.data.label, key } : {}),
+        ...(parsed.data.fieldType ? { fieldType: parsed.data.fieldType } : {}),
+        ...(parsed.data.isRequired !== undefined
+          ? { isRequired: parsed.data.isRequired }
+          : {}),
+        ...(parsed.data.showOnCaseDetail !== undefined
+          ? { showOnCaseDetail: parsed.data.showOnCaseDetail }
+          : {}),
+        ...(parsed.data.sortOrder !== undefined
+          ? { sortOrder: parsed.data.sortOrder }
+          : {}),
+        ...(parsed.data.isActive !== undefined
+          ? { isActive: parsed.data.isActive }
+          : {}),
+      };
+
+      const updatedIntakeField = await prisma.intakeField.update({
+        where: {
+          id: currentIntakeField.id,
+        },
+        data: updateData,
+        select: {
+          id: true,
+          key: true,
+          label: true,
+          fieldType: true,
+          placeholder: true,
+          helpText: true,
+          options: true,
+          isRequired: true,
+          showOnCaseDetail: true,
+          isActive: true,
+          sortOrder: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      res.status(200).json({
+        data: updatedIntakeField,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+settingsRouter.get("/workflow-statuses", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const workflowStatuses = await prisma.workflowStatus.findMany({
       where: {
@@ -547,81 +604,130 @@ settingsRouter.get("/workflow-statuses", async (_req, res, next) => {
   }
 });
 
-settingsRouter.post("/workflow-statuses", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = createWorkflowStatusSchema.safeParse(req.body);
+settingsRouter.post(
+  "/workflow-statuses",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = createWorkflowStatusSchema.safeParse(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const organizationId = await getDemoOrganizationId();
-    const slug = slugify(parsed.data.name);
-
-    if (!slug) {
-      res.status(400).json({
-        message: "Status name must include letters or numbers.",
-      });
-      return;
-    }
-
-    const existingStatus = await prisma.workflowStatus.findFirst({
-      where: {
-        organizationId,
-        slug,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (existingStatus) {
-      res.status(409).json({
-        message: "A workflow status with this slug already exists.",
-      });
-      return;
-    }
-
-    const maxSortOrderStatus = await prisma.workflowStatus.findFirst({
-      where: {
-        organizationId,
-      },
-      orderBy: {
-        sortOrder: "desc",
-      },
-      select: {
-        sortOrder: true,
-      },
-    });
-
-    const nextSortOrder = (maxSortOrderStatus?.sortOrder ?? 0) + 1;
-
-    const createdStatus = await prisma.$transaction(async (tx) => {
-      if (parsed.data.isDefault) {
-        await tx.workflowStatus.updateMany({
-          where: {
-            organizationId,
-            isDefault: true,
-          },
-          data: {
-            isDefault: false,
-          },
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
         });
+        return;
       }
 
-      return tx.workflowStatus.create({
-        data: {
+      const organizationId = req.currentUser!.organizationId;
+      const slug = slugify(parsed.data.name);
+
+      if (!slug) {
+        res.status(400).json({
+          message: "Status name must include letters or numbers.",
+        });
+        return;
+      }
+
+      const existingStatus = await prisma.workflowStatus.findFirst({
+        where: {
           organizationId,
-          name: parsed.data.name,
           slug,
-          color: parsed.data.color,
-          sortOrder: nextSortOrder,
-          isDefault: parsed.data.isDefault,
-          isClosed: parsed.data.isClosed,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (existingStatus) {
+        res.status(409).json({
+          message: "A workflow status with this slug already exists.",
+        });
+        return;
+      }
+
+      const maxSortOrderStatus = await prisma.workflowStatus.findFirst({
+        where: {
+          organizationId,
+        },
+        orderBy: {
+          sortOrder: "desc",
+        },
+        select: {
+          sortOrder: true,
+        },
+      });
+
+      const nextSortOrder = (maxSortOrderStatus?.sortOrder ?? 0) + 1;
+
+      const createdStatus = await prisma.$transaction(async (tx) => {
+        if (parsed.data.isDefault) {
+          await tx.workflowStatus.updateMany({
+            where: {
+              organizationId,
+              isDefault: true,
+            },
+            data: {
+              isDefault: false,
+            },
+          });
+        }
+
+        return tx.workflowStatus.create({
+          data: {
+            organizationId,
+            name: parsed.data.name,
+            slug,
+            color: parsed.data.color,
+            sortOrder: nextSortOrder,
+            isDefault: parsed.data.isDefault,
+            isClosed: parsed.data.isClosed,
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+            sortOrder: true,
+            isDefault: true,
+            isClosed: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
+      });
+
+      res.status(201).json({
+        data: createdStatus,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+settingsRouter.patch(
+  "/workflow-statuses/:id",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = updateWorkflowStatusSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const organizationId = req.currentUser!.organizationId;
+      const id = String(req.params.id);
+
+      const existingStatus = await prisma.workflowStatus.findFirst({
+        where: {
+          id,
+          organizationId,
         },
         select: {
           id: true,
@@ -631,103 +737,32 @@ settingsRouter.post("/workflow-statuses", ...requireSettingsManager, async (req,
           sortOrder: true,
           isDefault: true,
           isClosed: true,
-          createdAt: true,
-          updatedAt: true,
         },
       });
-    });
 
-    res.status(201).json({
-      data: createdStatus,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      if (!existingStatus) {
+        res.status(404).json({
+          message: "Workflow status not found.",
+        });
+        return;
+      }
 
-settingsRouter.patch("/workflow-statuses/:id", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = updateWorkflowStatusSchema.safeParse(req.body);
+      const nextSlug =
+        parsed.data.name === undefined
+          ? existingStatus.slug
+          : slugify(parsed.data.name);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
+      if (!nextSlug) {
+        res.status(400).json({
+          message: "Status name must include letters or numbers.",
+        });
+        return;
+      }
 
-    const organizationId = await getDemoOrganizationId();
-    const id = String(req.params.id);
-
-    const existingStatus = await prisma.workflowStatus.findFirst({
-      where: {
-        id,
-        organizationId,
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        color: true,
-        sortOrder: true,
-        isDefault: true,
-        isClosed: true,
-      },
-    });
-
-    if (!existingStatus) {
-      res.status(404).json({
-        message: "Workflow status not found.",
-      });
-      return;
-    }
-
-    const nextSlug =
-      parsed.data.name === undefined ? existingStatus.slug : slugify(parsed.data.name);
-
-    if (!nextSlug) {
-      res.status(400).json({
-        message: "Status name must include letters or numbers.",
-      });
-      return;
-    }
-
-    const duplicateStatus = await prisma.workflowStatus.findFirst({
-      where: {
-        organizationId,
-        slug: nextSlug,
-        id: {
-          not: existingStatus.id,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (duplicateStatus) {
-      res.status(409).json({
-        message: "A workflow status with this slug already exists.",
-      });
-      return;
-    }
-
-    const nextIsDefault = parsed.data.isDefault ?? existingStatus.isDefault;
-    const nextIsClosed = parsed.data.isClosed ?? existingStatus.isClosed;
-
-    if (nextIsDefault && nextIsClosed) {
-      res.status(400).json({
-        message: "A closed workflow status cannot be the default status.",
-      });
-      return;
-    }
-
-    if (parsed.data.isDefault === false && existingStatus.isDefault) {
-      const otherDefaultStatus = await prisma.workflowStatus.findFirst({
+      const duplicateStatus = await prisma.workflowStatus.findFirst({
         where: {
           organizationId,
-          isDefault: true,
+          slug: nextSlug,
           id: {
             not: existingStatus.id,
           },
@@ -737,17 +772,25 @@ settingsRouter.patch("/workflow-statuses/:id", ...requireSettingsManager, async 
         },
       });
 
-      if (!otherDefaultStatus) {
-        res.status(400).json({
-          message: "At least one workflow status must remain the default.",
+      if (duplicateStatus) {
+        res.status(409).json({
+          message: "A workflow status with this slug already exists.",
         });
         return;
       }
-    }
 
-    const updatedStatus = await prisma.$transaction(async (tx) => {
-      if (parsed.data.isDefault === true) {
-        await tx.workflowStatus.updateMany({
+      const nextIsDefault = parsed.data.isDefault ?? existingStatus.isDefault;
+      const nextIsClosed = parsed.data.isClosed ?? existingStatus.isClosed;
+
+      if (nextIsDefault && nextIsClosed) {
+        res.status(400).json({
+          message: "A closed workflow status cannot be the default status.",
+        });
+        return;
+      }
+
+      if (parsed.data.isDefault === false && existingStatus.isDefault) {
+        const otherDefaultStatus = await prisma.workflowStatus.findFirst({
           where: {
             organizationId,
             isDefault: true,
@@ -755,49 +798,73 @@ settingsRouter.patch("/workflow-statuses/:id", ...requireSettingsManager, async 
               not: existingStatus.id,
             },
           },
-          data: {
-            isDefault: false,
+          select: {
+            id: true,
           },
         });
+
+        if (!otherDefaultStatus) {
+          res.status(400).json({
+            message: "At least one workflow status must remain the default.",
+          });
+          return;
+        }
       }
 
-      return tx.workflowStatus.update({
-        where: {
-          id: existingStatus.id,
-        },
-        data: {
-          name: parsed.data.name,
-          slug: nextSlug,
-          color: parsed.data.color,
-          sortOrder: parsed.data.sortOrder,
-          isDefault: parsed.data.isDefault,
-          isClosed: parsed.data.isClosed,
-        },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          color: true,
-          sortOrder: true,
-          isDefault: true,
-          isClosed: true,
-          createdAt: true,
-          updatedAt: true,
-        },
+      const updatedStatus = await prisma.$transaction(async (tx) => {
+        if (parsed.data.isDefault === true) {
+          await tx.workflowStatus.updateMany({
+            where: {
+              organizationId,
+              isDefault: true,
+              id: {
+                not: existingStatus.id,
+              },
+            },
+            data: {
+              isDefault: false,
+            },
+          });
+        }
+
+        return tx.workflowStatus.update({
+          where: {
+            id: existingStatus.id,
+          },
+          data: {
+            name: parsed.data.name,
+            slug: nextSlug,
+            color: parsed.data.color,
+            sortOrder: parsed.data.sortOrder,
+            isDefault: parsed.data.isDefault,
+            isClosed: parsed.data.isClosed,
+          },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            color: true,
+            sortOrder: true,
+            isDefault: true,
+            isClosed: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        });
       });
-    });
 
-    res.status(200).json({
-      data: updatedStatus,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(200).json({
+        data: updatedStatus,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
-settingsRouter.get("/users", async (_req, res, next) => {
+settingsRouter.get("/users", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const users = await prisma.user.findMany({
       where: {
@@ -822,9 +889,9 @@ settingsRouter.get("/users", async (_req, res, next) => {
   }
 });
 
-settingsRouter.get("/team-members", async (_req, res, next) => {
+settingsRouter.get("/team-members", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const teamMembers = await prisma.user.findMany({
       where: {
@@ -867,9 +934,9 @@ settingsRouter.get("/team-members", async (_req, res, next) => {
   }
 });
 
-settingsRouter.get("/case-categories", async (_req, res, next) => {
+settingsRouter.get("/case-categories", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const caseCategories = await prisma.caseCategory.findMany({
       where: {
@@ -896,158 +963,166 @@ settingsRouter.get("/case-categories", async (_req, res, next) => {
   }
 });
 
-settingsRouter.post("/case-categories", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = createCaseCategorySchema.safeParse(req.body);
+settingsRouter.post(
+  "/case-categories",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = createCaseCategorySchema.safeParse(req.body);
 
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
 
-    const organizationId = await getDemoOrganizationId();
-    const slug = slugify(parsed.data.name);
+      const organizationId = req.currentUser!.organizationId;
+      const slug = slugify(parsed.data.name);
 
-    if (!slug) {
-      res.status(400).json({
-        message: "Category name must include letters or numbers.",
-      });
-      return;
-    }
+      if (!slug) {
+        res.status(400).json({
+          message: "Category name must include letters or numbers.",
+        });
+        return;
+      }
 
-    const existingCategory = await prisma.caseCategory.findFirst({
-      where: {
-        organizationId,
-        slug,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (existingCategory) {
-      res.status(409).json({
-        message: "A case category with this slug already exists.",
-      });
-      return;
-    }
-
-    const createdCategory = await prisma.caseCategory.create({
-      data: {
-        organizationId,
-        name: parsed.data.name,
-        slug,
-        description: parsed.data.description,
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-
-    res.status(201).json({
-      data: createdCategory,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-settingsRouter.patch("/case-categories/:id", ...requireSettingsManager, async (req, res, next) => {
-  try {
-    const parsed = updateCaseCategorySchema.safeParse(req.body);
-
-    if (!parsed.success) {
-      res.status(400).json({
-        message: "Invalid request body",
-        errors: parsed.error.flatten(),
-      });
-      return;
-    }
-
-    const organizationId = await getDemoOrganizationId();
-    const id = String(req.params.id);
-
-    const existingCategory = await prisma.caseCategory.findFirst({
-      where: {
-        id,
-        organizationId,
-      },
-      select: {
-        id: true,
-        slug: true,
-      },
-    });
-
-    if (!existingCategory) {
-      res.status(404).json({
-        message: "Case category not found.",
-      });
-      return;
-    }
-
-    const nextSlug =
-      parsed.data.name === undefined
-        ? existingCategory.slug
-        : slugify(parsed.data.name);
-
-    if (!nextSlug) {
-      res.status(400).json({
-        message: "Category name must include letters or numbers.",
-      });
-      return;
-    }
-
-    const duplicateCategory = await prisma.caseCategory.findFirst({
-      where: {
-        organizationId,
-        slug: nextSlug,
-        id: {
-          not: existingCategory.id,
+      const existingCategory = await prisma.caseCategory.findFirst({
+        where: {
+          organizationId,
+          slug,
         },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (duplicateCategory) {
-      res.status(409).json({
-        message: "A case category with this slug already exists.",
+        select: {
+          id: true,
+        },
       });
-      return;
+
+      if (existingCategory) {
+        res.status(409).json({
+          message: "A case category with this slug already exists.",
+        });
+        return;
+      }
+
+      const createdCategory = await prisma.caseCategory.create({
+        data: {
+          organizationId,
+          name: parsed.data.name,
+          slug,
+          description: parsed.data.description,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      res.status(201).json({
+        data: createdCategory,
+      });
+    } catch (error) {
+      next(error);
     }
+  },
+);
 
-    const updatedCategory = await prisma.caseCategory.update({
-      where: {
-        id: existingCategory.id,
-      },
-      data: {
-        name: parsed.data.name,
-        slug: nextSlug,
-        description: parsed.data.description,
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+settingsRouter.patch(
+  "/case-categories/:id",
+  ...requireSettingsManager,
+  async (req, res, next) => {
+    try {
+      const parsed = updateCaseCategorySchema.safeParse(req.body);
 
-    res.status(200).json({
-      data: updatedCategory,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      if (!parsed.success) {
+        res.status(400).json({
+          message: "Invalid request body",
+          errors: parsed.error.flatten(),
+        });
+        return;
+      }
+
+      const organizationId = req.currentUser!.organizationId;
+      const id = String(req.params.id);
+
+      const existingCategory = await prisma.caseCategory.findFirst({
+        where: {
+          id,
+          organizationId,
+        },
+        select: {
+          id: true,
+          slug: true,
+        },
+      });
+
+      if (!existingCategory) {
+        res.status(404).json({
+          message: "Case category not found.",
+        });
+        return;
+      }
+
+      const nextSlug =
+        parsed.data.name === undefined
+          ? existingCategory.slug
+          : slugify(parsed.data.name);
+
+      if (!nextSlug) {
+        res.status(400).json({
+          message: "Category name must include letters or numbers.",
+        });
+        return;
+      }
+
+      const duplicateCategory = await prisma.caseCategory.findFirst({
+        where: {
+          organizationId,
+          slug: nextSlug,
+          id: {
+            not: existingCategory.id,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (duplicateCategory) {
+        res.status(409).json({
+          message: "A case category with this slug already exists.",
+        });
+        return;
+      }
+
+      const updatedCategory = await prisma.caseCategory.update({
+        where: {
+          id: existingCategory.id,
+        },
+        data: {
+          name: parsed.data.name,
+          slug: nextSlug,
+          description: parsed.data.description,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      res.status(200).json({
+        data: updatedCategory,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+);
