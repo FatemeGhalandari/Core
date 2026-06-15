@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { Priority } from "../generated/prisma/index.js";
-import { getDemoOrganizationId } from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
 import {
   attachCurrentUser,
@@ -14,7 +13,7 @@ reportRouter.use(attachCurrentUser);
 
 const requireReportViewer = [
   requireUser,
-  requireRole("owner", "admin", "staff", "viewer"),
+  requireRole("owner", "admin", "staff"),
 ];
 
 function getAgeInDays(value: Date) {
@@ -31,9 +30,9 @@ function getPercent(value: number, total: number) {
   return Math.round((value / total) * 100);
 }
 
-reportRouter.get("/operations", ...requireReportViewer, async (_req, res, next) => {
+reportRouter.get("/operations", ...requireReportViewer, async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const today = new Date();
 
     const [
