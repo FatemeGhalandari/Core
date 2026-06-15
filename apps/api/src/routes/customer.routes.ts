@@ -1,14 +1,17 @@
 import { Router } from "express";
 import type { Prisma } from "../generated/prisma/index.js";
-import { getDemoOrganizationId } from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
 import { getStringQueryParam } from "../lib/queryParams.js";
+import { attachCurrentUser, requireUser } from "../middleware/auth.js";
 
 export const customerRouter = Router();
 
+customerRouter.use(attachCurrentUser);
+customerRouter.use(requireUser);
+
 customerRouter.get("/", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const search = getStringQueryParam(req.query.search);
 
     const where: Prisma.CustomerWhereInput = {
@@ -100,7 +103,7 @@ customerRouter.get("/", async (req, res, next) => {
 
 customerRouter.get("/:id", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const customer = await prisma.customer.findFirst({
       where: {
