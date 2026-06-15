@@ -172,7 +172,7 @@ export function CaseDetailPage() {
   return (
     <AppShell>
       <Link className="back-link" to="/">
-        ← Back to {caseLabelPlural.toLowerCase()}
+        Back to {caseLabelPlural.toLowerCase()}
       </Link>
 
       <header className="record-header">
@@ -385,7 +385,7 @@ export function CaseDetailPage() {
                     </strong>
 
                     <span>
-                      {comment.visibility} · {formatDateTime(comment.createdAt)}
+                      {comment.visibility} / {formatDateTime(comment.createdAt)}
                     </span>
                   </div>
 
@@ -426,7 +426,7 @@ export function CaseDetailPage() {
                         {event.actorUser?.name ??
                           event.actorCustomer?.name ??
                           "System"}{" "}
-                        · {formatDateTime(event.createdAt)}
+                        / {formatDateTime(event.createdAt)}
                       </p>
                     </div>
                   </div>
@@ -577,4 +577,3 @@ export function CaseDetailPage() {
     </AppShell>
   );
 }
-
