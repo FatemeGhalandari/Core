@@ -24,6 +24,40 @@ export async function attachCurrentUser(
   next: NextFunction,
 ) {
   try {
+    const demoOrganizationSlug = req.header("x-demo-organization-slug");
+
+    if (demoOrganizationSlug && process.env.NODE_ENV !== "production") {
+      const demoUser = await prisma.user.findFirst({
+        where: {
+          organization: {
+            slug: demoOrganizationSlug,
+          },
+          role: {
+            in: ["owner", "admin"],
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          organizationId: true,
+        },
+      });
+
+      if (demoUser) {
+        req.currentUser = {
+          ...demoUser,
+          role: demoUser.role as AppRole,
+        };
+        next();
+        return;
+      }
+    }
+
     const userId = req.header("x-user-id");
 
     if (!userId) {
