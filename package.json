@@ -15,7 +15,8 @@
     "build:api": "npm run build -w apps/api",
     "build:web": "npm run build -w apps/web",
     "db:up": "docker compose up -d",
-    "db:down": "docker compose down"
+    "db:down": "docker compose down",
+    "db:deploy": "npm run db:deploy -w apps/api"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
