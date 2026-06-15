@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { getDemoOrganizationId } from "../lib/demoOrg.js";
 import { prisma } from "../lib/prisma.js";
 import {
   attachCurrentUser,
@@ -28,8 +27,9 @@ import {
 export const caseRouter = Router();
 
 caseRouter.use(attachCurrentUser);
+caseRouter.use(requireUser);
 
-const requireCaseWorker = [requireUser, requireRole("owner", "admin", "staff")];
+const requireCaseWorker = [requireRole("owner", "admin", "staff")];
 
 caseRouter.post("/:id/comments", ...requireCaseWorker, async (req, res) => {
   const parsed = createCommentSchema.safeParse(req.body);
@@ -42,7 +42,7 @@ caseRouter.post("/:id/comments", ...requireCaseWorker, async (req, res) => {
   }
 
   const id = String(req.params.id);
-  const organizationId = await getDemoOrganizationId();
+  const organizationId = req.currentUser!.organizationId;
   const result = await addCaseComment({
     caseId: id,
     organizationId,
@@ -60,7 +60,7 @@ caseRouter.post("/:id/comments", ...requireCaseWorker, async (req, res) => {
 
 caseRouter.get("/", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const { where, orderBy } = getCaseListQuery(req.query, organizationId);
 
     const cases = await prisma.case.findMany({
@@ -93,7 +93,7 @@ caseRouter.patch("/:id/status", ...requireCaseWorker, async (req, res, next) => 
     const id = String(req.params.id);
     const { statusSlug } = parsed.data;
 
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const result = await changeCaseStatus({
       caseId: id,
       organizationId,
@@ -137,7 +137,7 @@ caseRouter.patch("/:id/assignee", ...requireCaseWorker, async (req, res, next) =
     const id = String(req.params.id);
     const { assignedUserId } = parsed.data;
 
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const result = await assignCase({
       caseId: id,
       organizationId,
@@ -178,7 +178,7 @@ caseRouter.post("/", ...requireCaseWorker, async (req, res, next) => {
       return;
     }
 
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
     const result = await createCase({
       organizationId,
       data: parsed.data,
@@ -209,7 +209,7 @@ caseRouter.post("/", ...requireCaseWorker, async (req, res, next) => {
 
 caseRouter.get("/:id", async (req, res, next) => {
   try {
-    const organizationId = await getDemoOrganizationId();
+    const organizationId = req.currentUser!.organizationId;
 
     const caseItem = await prisma.case.findFirst({
       where: {
