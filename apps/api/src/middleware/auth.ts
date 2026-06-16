@@ -1,6 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import type { AppRole } from "../lib/permissions.js";
+import { isDemoModeEnabled } from "../lib/demoMode.js";
 
 export type CurrentUser = {
   id: string;
@@ -10,14 +11,6 @@ export type CurrentUser = {
   organizationId: string;
 };
 
-declare global {
-  namespace Express {
-    interface Request {
-      currentUser?: CurrentUser;
-    }
-  }
-}
-
 export async function attachCurrentUser(
   req: Request,
   _res: Response,
@@ -26,7 +19,7 @@ export async function attachCurrentUser(
   try {
     const demoOrganizationSlug = req.header("x-demo-organization-slug");
 
-    if (demoOrganizationSlug && process.env.NODE_ENV !== "production") {
+    if (demoOrganizationSlug && isDemoModeEnabled()) {
       const demoUser = await prisma.user.findFirst({
         where: {
           organization: {

@@ -9,6 +9,7 @@ import {
 } from "../middleware/auth.js";
 import { industryTemplates } from "../lib/industry-templates.js";
 import { applyIndustryTemplateToWorkspace } from "../lib/apply-industry-template.js";
+import { isDemoModeEnabled } from "../lib/demoMode.js";
 
 export const settingsRouter = Router();
 
@@ -156,9 +157,9 @@ settingsRouter.get("/workspace", async (req, res, next) => {
 
 settingsRouter.get("/demo-organizations", async (_req, res, next) => {
   try {
-    if (process.env.NODE_ENV === "production") {
+    if (!isDemoModeEnabled()) {
       res.status(404).json({
-        message: "Demo mode is only available in local development.",
+        message: "Demo mode is not enabled for this environment.",
       });
       return;
     }

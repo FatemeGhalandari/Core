@@ -19,6 +19,7 @@ NODE_ENV=production
 PORT=4000
 DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
 CLIENT_URLS=https://your-core-web.vercel.app
+ENABLE_DEMO_MODE=true
 ```
 
 Notes:
@@ -27,6 +28,7 @@ Notes:
 - Many hosted PostgreSQL providers require SSL. Keep the provider's full connection string, including query params such as `sslmode=require`.
 - `CLIENT_URLS` is a comma-separated allowlist for browser origins that can call the API.
 - Do not include trailing slashes in `CLIENT_URLS`.
+- `ENABLE_DEMO_MODE=true` is optional. Use it for portfolio/demo deployments so the hosted app can switch between seeded demo workspaces.
 
 ### Frontend Web
 
@@ -92,6 +94,7 @@ npm run db:seed -w apps/api
 ```
 
 The seed creates all bundled demo workspaces: MapleCare Clinic, Summit Realty, Northstar Finance, Harbor Insurance, Pipeline Sales, and LocalPro Services.
+Hosted demo mode needs this seed data in the production database.
 
 ## Render API Example
 
