@@ -18,9 +18,15 @@ function getStatusColor(index: number) {
 export async function applyIndustryTemplateToWorkspace({
   organizationId,
   industryTemplateKey,
+  workspaceOverrides,
 }: {
   organizationId: string;
   industryTemplateKey: string;
+  workspaceOverrides?: {
+    appName?: string | null;
+    caseLabel?: string | null;
+    customerLabel?: string | null;
+  };
 }) {
   const template = industryTemplates.find(
     (templateOption) => templateOption.key === industryTemplateKey,
@@ -36,9 +42,10 @@ export async function applyIndustryTemplateToWorkspace({
         id: organizationId,
       },
       data: {
-        appName: template.appName,
-        caseLabel: template.caseLabel,
-        customerLabel: template.customerLabel,
+        appName: workspaceOverrides?.appName ?? template.appName,
+        caseLabel: workspaceOverrides?.caseLabel ?? template.caseLabel,
+        customerLabel:
+          workspaceOverrides?.customerLabel ?? template.customerLabel,
         industryTemplateKey: template.key,
         industry: template.key,
       },
