@@ -30,10 +30,22 @@ function getClientOrigins() {
 
 const CLIENT_ORIGINS = getClientOrigins();
 
+function isAllowedOrigin(origin: string) {
+  if (CLIENT_ORIGINS.includes(origin)) {
+    return true;
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    return /^http:\/\/localhost:\d+$/.test(origin);
+  }
+
+  return false;
+}
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || CLIENT_ORIGINS.includes(origin)) {
+      if (!origin || isAllowedOrigin(origin)) {
         callback(null, true);
         return;
       }
