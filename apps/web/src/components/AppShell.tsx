@@ -25,7 +25,20 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-mark">{appName.charAt(0).toUpperCase()}</div>
+          <div className="brand-mark" aria-hidden="true">
+            <svg
+              className="brand-logo"
+              viewBox="0 0 40 40"
+              focusable="false"
+            >
+              <rect width="40" height="40" rx="10" />
+              <path d="M12 14h10.5c3.4 0 6.1 2.7 6.1 6.1S25.9 26 22.5 26H12" />
+              <path d="M12 20h18" />
+              <circle cx="12" cy="14" r="2.3" />
+              <circle cx="30" cy="20" r="2.3" />
+              <circle cx="12" cy="26" r="2.3" />
+            </svg>
+          </div>
           <div>
             <div className="brand-name">{appName}</div>
             <div className="brand-subtitle">Workflow Platform</div>
