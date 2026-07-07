@@ -2,6 +2,8 @@ import axios from "axios";
 
 export const AUTH_STORAGE_KEY = "core.auth.user";
 export const DEMO_ORGANIZATION_STORAGE_KEY = "core.demo.organizationSlug";
+export const DEMO_AUTO_OPEN_DISABLED_STORAGE_KEY =
+  "core.demo.autoOpenDisabled";
 
 type StoredAuthUser = {
   id?: unknown;
