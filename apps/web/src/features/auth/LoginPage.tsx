@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
@@ -11,9 +12,32 @@ type LoginResponse = {
 };
 
 async function loginUser(data: { email: string; password: string }) {
-  const response = await api.post<LoginResponse>("/api/auth/login", data);
+  const response = await api.post<LoginResponse>("/api/auth/login", {
+    email: data.email.trim().toLowerCase(),
+    password: data.password,
+  });
 
   return response.data.data.user;
+}
+
+function getLoginErrorMessage(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 401) {
+      return "Could not sign in. Check the email and password.";
+    }
+
+    if (error.response?.status === 400) {
+      return "Enter a valid email address and password.";
+    }
+
+    if (error.response) {
+      return "Could not sign in because the server returned an error. Try again in a moment.";
+    }
+
+    return "Could not reach the API. Make sure the backend is running on http://localhost:4000.";
+  }
+
+  return "Could not sign in. Try again in a moment.";
 }
 
 export function LoginPage() {
@@ -76,7 +100,7 @@ export function LoginPage() {
 
         {loginMutation.isError && (
           <div className="form-error">
-            Could not sign in. Check the email and password.
+            {getLoginErrorMessage(loginMutation.error)}
           </div>
         )}
 
