@@ -61,7 +61,12 @@ export function ApplyWorkspaceTemplateButton({
       queryClient.invalidateQueries({
         queryKey: ["settings", "intake-fields"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["settings", "demo-organizations"],
+      });
       queryClient.invalidateQueries({ queryKey: ["cases"] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
       setErrorMessage("");
       setStatusMessage(
         `${templateName ?? "Template"} applied. Workspace labels and setup have been refreshed.`,
