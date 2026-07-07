@@ -29,6 +29,7 @@ import {
   updateWorkspaceProfile,
   type CaseCategoryEditForm,
   type CaseCategorySetting,
+  type DemoOrganization,
   type IntakeFieldCreateForm,
   type IntakeFieldEditForm,
   type IntakeFieldSetting,
@@ -232,6 +233,7 @@ export function SettingsPage() {
     }
 
     setSelectedDemoSlug(workspaceProfile.slug);
+    setDemoOrganizationSlug(workspaceProfile.slug);
   }, [selectedDemoSlug, workspaceProfile?.slug]);
 
   const openCases = cases.filter((caseItem) => !caseItem.status.isClosed);
@@ -307,10 +309,61 @@ export function SettingsPage() {
 
   const updateWorkspaceProfileMutation = useMutation({
     mutationFn: updateWorkspaceProfile,
-    onSuccess: () => {
+    onSuccess: (workspaceProfile) => {
+      const matchingDemoOrganization = workspaceProfile.industryTemplateKey
+        ? demoOrganizations.find(
+            (organization) =>
+              organization.industryTemplateKey ===
+              workspaceProfile.industryTemplateKey,
+          )
+        : undefined;
+
+      if (
+        matchingDemoOrganization &&
+        matchingDemoOrganization.id !== workspaceProfile.id
+      ) {
+        selectDemoOrganization(matchingDemoOrganization);
+        return;
+      }
+
+      queryClient.setQueryData(["settings", "workspace"], workspaceProfile);
+      queryClient.setQueryData(
+        ["settings", "demo-organizations"],
+        (currentOrganizations: typeof demoOrganizations | undefined) =>
+          currentOrganizations?.map((organization) =>
+            organization.id === workspaceProfile.id
+              ? {
+                  ...organization,
+                  name: workspaceProfile.name,
+                  slug: workspaceProfile.slug,
+                  appName: workspaceProfile.appName,
+                  caseLabel: workspaceProfile.caseLabel,
+                  customerLabel: workspaceProfile.customerLabel,
+                  industryTemplateKey: workspaceProfile.industryTemplateKey,
+                }
+              : organization,
+          ),
+      );
+      setSelectedDemoSlug(workspaceProfile.slug);
+      setDemoOrganizationSlug(workspaceProfile.slug);
       queryClient.invalidateQueries({
         queryKey: ["settings", "workspace"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["settings", "demo-organizations"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["settings", "workflow-statuses"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["settings", "case-categories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["settings", "intake-fields"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["cases"] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["reports"] });
     },
   });
 
@@ -471,20 +524,18 @@ export function SettingsPage() {
       caseLabel: template?.caseLabel ?? current.caseLabel,
       customerLabel: template?.customerLabel ?? current.customerLabel,
     }));
-  }
 
-  function handleDemoOrganizationChange(
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) {
-    const nextSlug = event.target.value;
-    const selectedOrganization = demoOrganizations.find(
-      (organization) => organization.slug === nextSlug,
+    const matchingDemoOrganization = demoOrganizations.find(
+      (organization) => organization.industryTemplateKey === industryTemplateKey,
     );
 
-    if (!selectedOrganization) {
-      return;
+    if (matchingDemoOrganization) {
+      selectDemoOrganization(matchingDemoOrganization);
     }
+  }
 
+  function selectDemoOrganization(selectedOrganization: DemoOrganization) {
+    const nextSlug = selectedOrganization.slug;
     setSelectedDemoSlug(nextSlug);
     setDemoOrganizationSlug(nextSlug);
     login(selectedOrganization.demoUser);
@@ -503,6 +554,20 @@ export function SettingsPage() {
         query.queryKey[0] !== "settings" ||
         query.queryKey[1] !== "demo-organizations",
     });
+  }
+
+  function handleDemoOrganizationChange(
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) {
+    const selectedOrganization = demoOrganizations.find(
+      (organization) => organization.slug === event.target.value,
+    );
+
+    if (!selectedOrganization) {
+      return;
+    }
+
+    selectDemoOrganization(selectedOrganization);
   }
 
   function handleCreateIntakeField(event: React.FormEvent<HTMLFormElement>) {
