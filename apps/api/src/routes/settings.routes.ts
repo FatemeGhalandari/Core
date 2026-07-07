@@ -247,27 +247,44 @@ settingsRouter.patch(
         return;
       }
 
-      const updatedWorkspace = await prisma.organization.update({
-        where: {
-          id: existingWorkspace.id,
-        },
-        data: {
-          appName: parsed.data.appName,
-          caseLabel: parsed.data.caseLabel,
-          customerLabel: parsed.data.customerLabel,
-          industryTemplateKey: parsed.data.industryTemplateKey,
-        },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          industry: true,
-          appName: true,
-          caseLabel: true,
-          customerLabel: true,
-          industryTemplateKey: true,
-        },
-      });
+      const updatedWorkspace = parsed.data.industryTemplateKey
+        ? await applyIndustryTemplateToWorkspace({
+            organizationId: existingWorkspace.id,
+            industryTemplateKey: parsed.data.industryTemplateKey,
+            workspaceOverrides: {
+              appName: parsed.data.appName,
+              caseLabel: parsed.data.caseLabel,
+              customerLabel: parsed.data.customerLabel,
+            },
+          })
+        : await prisma.organization.update({
+            where: {
+              id: existingWorkspace.id,
+            },
+            data: {
+              appName: parsed.data.appName,
+              caseLabel: parsed.data.caseLabel,
+              customerLabel: parsed.data.customerLabel,
+              industryTemplateKey: parsed.data.industryTemplateKey,
+            },
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              industry: true,
+              appName: true,
+              caseLabel: true,
+              customerLabel: true,
+              industryTemplateKey: true,
+            },
+          });
+
+      if (!updatedWorkspace) {
+        res.status(404).json({
+          message: "Industry template not found.",
+        });
+        return;
+      }
 
       res.status(200).json({
         data: updatedWorkspace,
