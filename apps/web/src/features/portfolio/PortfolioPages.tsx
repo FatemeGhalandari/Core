@@ -1,6 +1,9 @@
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
-import { setDemoOrganizationSlug } from "../../lib/api";
+import {
+  DEMO_AUTO_OPEN_DISABLED_STORAGE_KEY,
+  setDemoOrganizationSlug,
+} from "../../lib/api";
 
 type AccentStyle = CSSProperties & {
   "--accent": string;
@@ -104,6 +107,7 @@ const coreHighlights = [
 ];
 
 function setDemoMode(slug: string) {
+  window.localStorage.removeItem(DEMO_AUTO_OPEN_DISABLED_STORAGE_KEY);
   setDemoOrganizationSlug(slug);
 }
 
@@ -189,8 +193,12 @@ export function CoreLandingPage() {
             <Link className="primary-button" to="/demo/clinic">
               View demo pages
             </Link>
-            <Link className="secondary-button" to="/login">
-              Open app login
+            <Link
+              className="secondary-button"
+              to="/"
+              onClick={() => setDemoMode("maplecare-clinic")}
+            >
+              Open live app
             </Link>
           </div>
         </div>
@@ -261,7 +269,7 @@ export function VerticalDemoPage({ demoKey }: { demoKey: string }) {
               to="/login"
               onClick={() => setDemoMode(demo.slug)}
             >
-              Set demo mode
+              Open live app
             </Link>
             <Link className="secondary-button" to="/portfolio">
               Back to Core
@@ -269,7 +277,8 @@ export function VerticalDemoPage({ demoKey }: { demoKey: string }) {
           </div>
 
           <p className="portfolio-login-note">
-            Suggested login: {demo.loginEmail} / Password123!
+            Opens with public demo access. Manual login: {demo.loginEmail} /
+            Password123!
           </p>
         </div>
 
