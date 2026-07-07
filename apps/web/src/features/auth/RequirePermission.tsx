@@ -43,7 +43,18 @@ export function RequirePermission({
   children: ReactNode;
   allowed: (role: AppRole) => boolean;
 }) {
-  const { user } = useAuth();
+  const { user, isInitializing } = useAuth();
+
+  if (isInitializing) {
+    return (
+      <AppShell>
+        <div className="state-card state-card-centered">
+          <h2>Opening demo workspace...</h2>
+          <p>Preparing the public Core demo for review.</p>
+        </div>
+      </AppShell>
+    );
+  }
 
   if (!user) {
     return <Navigate replace to="/login" />;
