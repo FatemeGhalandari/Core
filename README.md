@@ -1,5 +1,6 @@
 # Core
-<img width="800" height="500" alt="Core_Realty_Email_Walkthrough" src="https://github.com/user-attachments/assets/5ceac8c7-f965-4b39-9c23-81f55e08d88b" /> 
+<img width="800" height="500" alt="Core_Realty_Email_Walkthrough" src="https://github.com/user-attachments/assets/5ceac8c7-f965-4b39-9c23-81f55e08d88b" />   
+
 Core is a reusable full-stack SaaS workflow and case management platform.
 
 The product is built around one central object: a **Case**. A case can represent an appointment request, property inquiry, finance application, insurance claim, sales deal, local service booking, support issue, or any other unit of operational work.
