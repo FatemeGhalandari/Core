@@ -22,7 +22,8 @@ import {
   getWorkflowStatusSelectOptions,
 } from "./caseUtils";
 export function CaseDetailPage() {
-  const { caseLabel, caseLabelPlural, customerLabel } = useWorkspaceLabels();
+  const { caseLabel, caseLabelPlural, customerLabel, isCleaningTemplate } =
+    useWorkspaceLabels();
   const { user } = useAuth();
   const canCurrentUserWorkCases = Boolean(user && canWorkCases(user.role));
   const params = useParams();
@@ -260,7 +261,11 @@ export function CaseDetailPage() {
             <div className="panel-header">
               <div>
                 <h2>{caseLabel} Overview</h2>
-                <p>Core operational details for this work item.</p>
+                <p>
+                  {isCleaningTemplate
+                    ? "Operational details for this cleaning job."
+                    : "Core operational details for this work item."}
+                </p>
               </div>
             </div>
 
