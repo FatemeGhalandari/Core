@@ -34,6 +34,18 @@ reportRouter.get("/operations", ...requireReportViewer, async (req, res, next) =
   try {
     const organizationId = req.currentUser!.organizationId;
     const today = new Date();
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: organizationId,
+      },
+      select: {
+        industryTemplateKey: true,
+      },
+    });
+    const waitingStatusSlug =
+      organization?.industryTemplateKey === "cleaning"
+        ? "awaiting-client-confirmation"
+        : "waiting-on-customer";
 
     const [
       totalCases,
@@ -87,7 +99,7 @@ reportRouter.get("/operations", ...requireReportViewer, async (req, res, next) =
         where: {
           organizationId,
           status: {
-            slug: "waiting-on-customer",
+            slug: waitingStatusSlug,
           },
         },
       }),
