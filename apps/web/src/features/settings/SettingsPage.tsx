@@ -40,8 +40,6 @@ import {
   type WorkspaceProfileForm,
 } from "./settingsApi";
 
-import { ApplyWorkspaceTemplateButton } from "./ApplyWorkspaceTemplateButton";
-
 const INTAKE_FIELD_TYPE_OPTIONS: { label: string; value: IntakeFieldType }[] = [
   { label: "Text", value: "text" },
   { label: "Long text", value: "textarea" },
@@ -228,13 +226,26 @@ export function SettingsPage() {
   }, [workspaceProfile]);
 
   useEffect(() => {
-    if (selectedDemoSlug || !workspaceProfile?.slug) {
+    if (!workspaceProfile?.slug || selectedDemoSlug === workspaceProfile.slug) {
+      return;
+    }
+
+    if (
+      workspaceProfileForm.industryTemplateKey &&
+      workspaceProfileForm.industryTemplateKey !==
+        (workspaceProfile.industryTemplateKey ?? "")
+    ) {
       return;
     }
 
     setSelectedDemoSlug(workspaceProfile.slug);
     setDemoOrganizationSlug(workspaceProfile.slug);
-  }, [selectedDemoSlug, workspaceProfile?.slug]);
+  }, [
+    selectedDemoSlug,
+    workspaceProfile?.industryTemplateKey,
+    workspaceProfile?.slug,
+    workspaceProfileForm.industryTemplateKey,
+  ]);
 
   const openCases = cases.filter((caseItem) => !caseItem.status.isClosed);
   const unassignedCases = cases.filter((caseItem) => !caseItem.assignedUser);
@@ -310,22 +321,6 @@ export function SettingsPage() {
   const updateWorkspaceProfileMutation = useMutation({
     mutationFn: updateWorkspaceProfile,
     onSuccess: (workspaceProfile) => {
-      const matchingDemoOrganization = workspaceProfile.industryTemplateKey
-        ? demoOrganizations.find(
-            (organization) =>
-              organization.industryTemplateKey ===
-              workspaceProfile.industryTemplateKey,
-          )
-        : undefined;
-
-      if (
-        matchingDemoOrganization &&
-        matchingDemoOrganization.id !== workspaceProfile.id
-      ) {
-        selectDemoOrganization(matchingDemoOrganization);
-        return;
-      }
-
       queryClient.setQueryData(["settings", "workspace"], workspaceProfile);
       queryClient.setQueryData(
         ["settings", "demo-organizations"],
@@ -501,6 +496,17 @@ export function SettingsPage() {
       return;
     }
 
+    const matchingDemoOrganization =
+      findDemoOrganizationForTemplate(industryTemplateKey);
+
+    if (
+      matchingDemoOrganization &&
+      matchingDemoOrganization.id !== workspaceProfile?.id
+    ) {
+      selectDemoOrganization(matchingDemoOrganization);
+      return;
+    }
+
     updateWorkspaceProfileMutation.mutate({
       appName,
       caseLabel,
@@ -524,14 +530,26 @@ export function SettingsPage() {
       caseLabel: template?.caseLabel ?? current.caseLabel,
       customerLabel: template?.customerLabel ?? current.customerLabel,
     }));
+  }
 
-    const matchingDemoOrganization = demoOrganizations.find(
-      (organization) => organization.industryTemplateKey === industryTemplateKey,
+  function findDemoOrganizationForTemplate(industryTemplateKey: string) {
+    if (!industryTemplateKey) {
+      return undefined;
+    }
+
+    const template = industryTemplates.find(
+      (templateOption) => templateOption.key === industryTemplateKey,
     );
 
-    if (matchingDemoOrganization) {
-      selectDemoOrganization(matchingDemoOrganization);
+    if (template?.workspaceSlug) {
+      return demoOrganizations.find(
+        (organization) => organization.slug === template.workspaceSlug,
+      );
     }
+
+    return demoOrganizations.find(
+      (organization) => organization.industryTemplateKey === industryTemplateKey,
+    );
   }
 
   function selectDemoOrganization(selectedOrganization: DemoOrganization) {
@@ -642,7 +660,6 @@ export function SettingsPage() {
   }
 
   const workspaceName = workspaceProfile?.name ?? "Workspace";
-  const workspaceSlug = workspaceProfile?.slug ?? "";
   const workspaceAppName = workspaceProfile?.appName ?? "Core";
   const workspaceCaseLabel = workspaceProfile?.caseLabel ?? "Case";
   const workspaceCustomerLabel = workspaceProfile?.customerLabel ?? "Customer";
@@ -862,14 +879,19 @@ export function SettingsPage() {
                       {demoOrganizations.length === 0 ? (
                         <option value="">No demos seeded</option>
                       ) : (
-                        demoOrganizations.map((organization) => (
-                          <option
-                            key={organization.id}
-                            value={organization.slug}
-                          >
-                            {organization.name}
-                          </option>
-                        ))
+                        <>
+                          {!selectedDemoSlug && (
+                            <option value="">No matching demo seeded</option>
+                          )}
+                          {demoOrganizations.map((organization) => (
+                            <option
+                              key={organization.id}
+                              value={organization.slug}
+                            >
+                              {organization.name}
+                            </option>
+                          ))}
+                        </>
                       )}
                     </select>
                   </label>
@@ -933,11 +955,6 @@ export function SettingsPage() {
                     </label>
 
                     <label>
-                      Workspace slug
-                      <input defaultValue={workspaceSlug} readOnly />
-                    </label>
-
-                    <label>
                       Primary work object
                       <input
                         name="caseLabel"
@@ -983,25 +1000,6 @@ export function SettingsPage() {
                       </select>
                     </label>
 
-                    <div className="settings-inline-action">
-                      <ApplyWorkspaceTemplateButton
-                        industryTemplateKey={
-                          workspaceProfileForm.industryTemplateKey
-                        }
-                        templateName={selectedIndustryTemplate?.name}
-                      />
-                    </div>
-
-                    <label>
-                      Default status
-                      <select defaultValue="new" disabled>
-                        {workflowStatuses.map((status) => (
-                          <option key={status.id} value={status.slug}>
-                            {status.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
                   </div>
 
                   {updateWorkspaceProfileMutation.isError && (
