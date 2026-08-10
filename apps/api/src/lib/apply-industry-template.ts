@@ -1,14 +1,7 @@
 import { Prisma } from "../generated/prisma/index.js";
 import { prisma } from "./prisma.js";
 import { industryTemplates } from "./industry-templates.js";
-
-function slugify(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+import { slugify } from "./slug.js";
 
 function getStatusColor(index: number) {
   const colors = ["gray", "blue", "yellow", "purple", "green"];
@@ -37,11 +30,36 @@ export async function applyIndustryTemplateToWorkspace({
   }
 
   const result = await prisma.$transaction(async (tx) => {
+    const baseWorkspaceSlug =
+      slugify(template.workspaceSlug) ||
+      slugify(template.appName) ||
+      template.key;
+    let workspaceSlug = baseWorkspaceSlug;
+    let slugSuffix = 2;
+
+    while (
+      await tx.organization.findFirst({
+        where: {
+          slug: workspaceSlug,
+          id: {
+            not: organizationId,
+          },
+        },
+        select: {
+          id: true,
+        },
+      })
+    ) {
+      workspaceSlug = `${baseWorkspaceSlug}-${slugSuffix}`;
+      slugSuffix += 1;
+    }
+
     const updatedWorkspace = await tx.organization.update({
       where: {
         id: organizationId,
       },
       data: {
+        slug: workspaceSlug,
         appName: workspaceOverrides?.appName ?? template.appName,
         caseLabel: workspaceOverrides?.caseLabel ?? template.caseLabel,
         customerLabel:
