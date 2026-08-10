@@ -62,8 +62,13 @@ function ReportBreakdown({
 }
 
 export function ReportsPage() {
-  const { caseLabel, caseLabelPlural, customerLabel, customerLabelPlural } =
-    useWorkspaceLabels();
+  const {
+    caseLabel,
+    caseLabelPlural,
+    customerLabel,
+    customerLabelPlural,
+    isCleaningTemplate,
+  } = useWorkspaceLabels();
 
   const {
     data: report,
@@ -226,7 +231,7 @@ export function ReportsPage() {
         </DashboardListCard>
 
         <DashboardListCard
-          title="Owner Workload"
+          title={isCleaningTemplate ? "Crew Workload" : "Owner Workload"}
           description={`Open ${caseLabelPlural.toLowerCase()} grouped by current internal owner.`}
         >
           <ReportBreakdown
