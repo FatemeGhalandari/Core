@@ -6,6 +6,9 @@ dist
 .env.*
 !.env.example
 
+# Local Docker overrides
+docker-compose.yml
+
 # Logs
 *.log
 npm-debug.log*
