@@ -22,6 +22,7 @@ export function getWorkspaceLabels(
   const appName = workspaceProfile?.appName ?? "Core";
   const caseLabel = workspaceProfile?.caseLabel ?? "Case";
   const customerLabel = workspaceProfile?.customerLabel ?? "Customer";
+  const industryTemplateKey = workspaceProfile?.industryTemplateKey ?? "";
 
   return {
     appName,
@@ -29,6 +30,8 @@ export function getWorkspaceLabels(
     caseLabelPlural: pluralizeLabel(caseLabel),
     customerLabel,
     customerLabelPlural: pluralizeLabel(customerLabel),
+    industryTemplateKey,
+    isCleaningTemplate: industryTemplateKey === "cleaning",
   };
 }
 
