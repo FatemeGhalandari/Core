@@ -2,7 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../../components/AppShell";
-import { EmptyState, ErrorState, LoadingState } from "../../components/StateCards";
+import {
+  EmptyState,
+  ErrorState,
+  LoadingState,
+} from "../../components/StateCards";
 import { canWorkCases, useAuth } from "../auth/auth";
 import {
   fetchAssignableUsers,
@@ -10,7 +14,12 @@ import {
   fetchWorkflowStatuses,
 } from "../settings/settingsApi";
 import { useWorkspaceLabels } from "../workspace/workspaceLabels";
-import { fetchCases, type CaseListFilters, type CaseListItem, type CaseSortOption } from "./caseApi";
+import {
+  fetchCases,
+  type CaseListFilters,
+  type CaseListItem,
+  type CaseSortOption,
+} from "./caseApi";
 import {
   formatDate,
   formatFieldLabel,
@@ -66,13 +75,23 @@ export function CaseInboxPage() {
     [search, statusSlug, priority, categorySlug, assignedUserId, sort],
   );
 
+  const isDefaultCaseQuery =
+    !search &&
+    !statusSlug &&
+    !priority &&
+    !categorySlug &&
+    !assignedUserId &&
+    sort === "updated";
+
   const {
     data: cases = [],
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["cases", filters],
+    queryKey: isDefaultCaseQuery
+      ? ["cases", "operations-overview"]
+      : ["cases", filters],
     queryFn: () => fetchCases(filters),
   });
 
@@ -675,4 +694,3 @@ export function CaseInboxPage() {
     </AppShell>
   );
 }
-
