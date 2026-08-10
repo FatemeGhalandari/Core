@@ -78,6 +78,7 @@ export type TeamMemberSetting = AssignableUser & {
 export type IndustryTemplate = {
   key: string;
   name: string;
+  workspaceSlug: string;
   appName: string;
   caseLabel: string;
   customerLabel: string;
